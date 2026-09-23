@@ -1,0 +1,4 @@
+*.log
+
+storage/img/temp/*
+!storage/img/temp/.gitkeep
