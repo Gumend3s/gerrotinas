@@ -24,9 +24,9 @@ abstract class Controller
             $subPath = rtrim($subfolder, '/') . '/';
         }
 
-        $filePath = self::BASE_PATH . 'app/Models/' . $subPath . $model . '.php';
+        $filePath = self::BASE_PATH . "app/Models/$subPath$model.php";
 
-        if (!file_exists($filePath)) throw new RuntimeException("Model file not found: {$filePath}");
+        if (!file_exists($filePath)) throw new RuntimeException("Model file not found: $filePath");
 
         require_once $filePath;
         return new $model();
@@ -45,9 +45,9 @@ abstract class Controller
     public function view(string $view, array $data = []): void
     {
         $this->guardPathSegment($view, 'view', allowSlashes: true);
-        $filePath = self::BASE_PATH . 'app/Views/' . $view . '.php';
+        $filePath = self::BASE_PATH . "app/Views/$view.php";
 
-        if (!file_exists($filePath)) throw new RuntimeException("View file not found: {$filePath}");
+        if (!file_exists($filePath)) throw new RuntimeException("View file not found: $filePath");
 
         extract($data, EXTR_SKIP);
         require_once $filePath;
@@ -65,7 +65,7 @@ abstract class Controller
      */
     private function guardPathSegment(string $segment, string $label, bool $allowSlashes = false): void
     {
-        if (str_contains($segment, '..') || str_contains($segment, "\0")) throw new InvalidArgumentException("Invalid {$label}: path traversal detected.");
-        if (!$allowSlashes && (str_contains($segment, '/') || str_contains($segment, '\\'))) throw new InvalidArgumentException("Invalid {$label}: path separators not allowed.");
+        if (str_contains($segment, '..') || str_contains($segment, "\0")) throw new InvalidArgumentException("Invalid $label: path traversal detected.");
+        if (!$allowSlashes && (str_contains($segment, '/') || str_contains($segment, '\\'))) throw new InvalidArgumentException("Invalid $label: path separators not allowed.");
     }
 }

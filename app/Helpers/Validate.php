@@ -128,7 +128,7 @@ final class Validate
      *
      * @return bool True if the number is valid, otherwise false.
      */
-    public static function cnpjCPF(string $cnpj_cpf)
+    public static function cnpjCPF(string $cnpj_cpf): bool
     {
         return strlen($cnpj_cpf) <= 14 ? self::cpf($cnpj_cpf) : self::cnpj($cnpj_cpf);
     }

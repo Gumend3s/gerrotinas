@@ -30,7 +30,7 @@ class Users extends Controller
      */
     private function getAccessibleUser(int|string $id): object
     {
-        if (!($user = $this->userModel->findBy($id, activeOnly: true))) {
+        if (!($user = $this->userModel->findBy(['id' => $id], activeOnly: true))) {
             Alert::flash('users', 'Erro: usuário não encontrado', 'error');
             Helper::redirect('users');
         }
@@ -118,7 +118,7 @@ class Users extends Controller
             'password' => password_hash($password, PASSWORD_DEFAULT),
         ];
 
-        if ($this->userModel->update($id, $fields)) Alert::flash('users', "A senha temporária do usuário é: <strong>" . $password . "</strong>", 'success', 'withCopy');
+        if ($this->userModel->update($id, $fields)) Alert::flash('users', "A senha temporária do usuário é: <strong>$password</strong>", 'success', 'withCopy');
         else Alert::flash('users', 'Erro: falha ao redefinir a senha', 'error');
 
         Helper::redirect('users');
@@ -135,14 +135,20 @@ class Users extends Controller
     {
         $this->getAccessibleUser($id);
 
-        if ($this->userModel->softDelete($id)) Alert::flash('users', "Usuário deletado com sucesso");
-        else Alert::flash('users', 'Erro: falha ao deletar usuário', 'error');
-
-        Helper::redirect('users');
+        if ($this->userModel->softDelete($id)) {
+            Alert::flash('users', "Usuário deletado com sucesso");
+            Helper::redirect('users');
+        } else {
+            Alert::flash('users/upsert', 'Erro: falha ao deletar usuário', 'error');
+            Helper::redirect("users/upsert/$id");
+        }
     }
 
     /**
-     * Exports users to a CSV file.
+     * Exports active users to a CSV file.
+     *
+     * Retrieves the user data, converts department, level, and status values to their
+     * display labels, and exports the records using the corresponding field labels.
      *
      * @return void
      */
@@ -245,7 +251,7 @@ class Users extends Controller
         $data['department_error'] = empty($data['department']) ? "Escolha um departamento" : (!Auth::canBypass() && in_array($data['department'], ['TECHNOLOGY', 'EXECUTIVE'], true) ? 'Você não possui permissão para isso' : null);
         $data['level_error'] = empty($data['level']) ? "Escolha um nível de permissão" : null;
 
-        if ($data['cpf_error'] === null && ($existingUser = $this->userModel->findBy($data['cpf'], 'cpf')) && $existingUser->id != $data['id']) {
+        if ($data['cpf_error'] === null && ($existingUser = $this->userModel->findBy(['cpf' => $data['cpf']])) && $existingUser->id != $data['id']) {
             if ($existingUser->status === 'DELETED' && !$data['isEditing']) {
                 $data['shouldReactivate'] = true;
                 $data['existingUser'] = $existingUser;
@@ -287,7 +293,7 @@ class Users extends Controller
                 $success = $this->userModel->update($data['existingUser']->id, $data);
             } else $success = $this->userModel->create($data);
 
-            $message = "Cadastrado com sucesso <br>A senha temporária do usuário é: <strong>{$password}</strong>";
+            $message = "Cadastrado com sucesso <br>A senha temporária do usuário é: <strong>$password</strong>";
             $variant = 'withCopy';
         }
 

@@ -266,6 +266,12 @@ select {
     margin-bottom: -4px;
 }
 
+.btn-responsive {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
 .btn-primary {
     background-color: var(--night-blue);
     border: 0;
@@ -279,6 +285,11 @@ select {
     box-shadow: none;
 }
 
+.btn-primary.dropdown-toggle.show {
+    background-color: var(--night-blue) !important;
+    box-shadow: none;
+}
+
 .btn-secondary {
     background-color: var(--amber);
     border: 0;
@@ -289,6 +300,11 @@ select {
 .btn-secondary:active {
     background-color: var(--night-blue) !important;
     border: 0;
+    box-shadow: none;
+}
+
+.btn-secondary.dropdown-toggle.show {
+    background-color: var(--amber) !important;
     box-shadow: none;
 }
 
@@ -320,6 +336,16 @@ select {
     box-shadow: none;
 }
 
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: var(--gray);
+}
+
+.dropdown-item:active {
+    background-color: #E6E6E6;
+    color: inherit;
+}
+
 .swal2-confirm {
     border: 0 !important;
     box-shadow: none !important;
@@ -336,38 +362,38 @@ select {
 }
 
 .badge-green {
-    background-color: #BCE1BD;	
+    background-color: #BCE1BD;
     color: #329536;
 }
 
 .badge-yellow {
-    background-color: #FFE1A6;	
+    background-color: #FFE1A6;
     color: #F4A400;
 }
 
 .badge-orange {
-    background-color: #FFE0B2;	
+    background-color: #FFE0B2;
     color: #EF6C00;
 }
 
 .badge-red {
-    background-color: #FCD3CF;	
+    background-color: #FCD3CF;
     color: #F51200;
 }
 
 .badge-blue {
-    background-color: #BFE1F6;	
+    background-color: #BFE1F6;
     color: #0A53A8;
 }
 
 .badge-purple {
-    background-color: #E6CFF2;	
+    background-color: #E6CFF2;
     color: #5A3286;
 }
 
 .badge-default,
 .badge-gray {
-    background-color: #E6E6E6;	
+    background-color: #E6E6E6;
     color: #3D3D3D;
 }
 
@@ -456,6 +482,14 @@ footer {
         max-width: 100%;
         height: auto;
         aspect-ratio: 1 / 1;
+    }
+}
+
+@media (min-width: 576px) {
+    .btn-responsive {
+        width: auto;
+        padding-left: 8px;
+        padding-right: 8px;
     }
 }
 

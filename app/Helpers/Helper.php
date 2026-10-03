@@ -50,7 +50,7 @@ class Helper
             if ($i === 0 || $i === count($parts) - 1) $result[] = mb_convert_case($part, MB_CASE_TITLE, 'UTF-8');
             else {
                 $initial = mb_strtoupper(mb_substr($part, 0, 1, 'UTF-8'), 'UTF-8');
-                $result[] = $initial . '.';
+                $result[] = "$initial.";
             }
         }
 
@@ -207,7 +207,7 @@ class Helper
 
         $classPrefixes = (array) $classPrefixes;
         $classVariant = ($maps[$mapKey][$value] ?? "default");
-        $classes = array_map(fn($prefix) => $prefix . '-' . $classVariant, $classPrefixes);
+        $classes = array_map(fn($prefix) => "$prefix-$classVariant", $classPrefixes);
 
         return self::escape(implode(' ', $classes));
     }
@@ -287,7 +287,7 @@ class Helper
      */
     public static function serveImage(string $directory, string $imageCode): void
     {
-        $filePath = dirname(APP_ROOT) . "/storage/img/{$directory}/{$imageCode}.jpg";
+        $filePath = dirname(APP_ROOT) . "/storage/img/$directory/$imageCode.jpg";
 
         if (!file_exists($filePath)) {
             http_response_code(404);

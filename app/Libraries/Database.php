@@ -80,12 +80,14 @@ class Database
      */
     public function getEnumValues(string $table, string $column): string
     {
-        $this->query("
-            SELECT REPLACE(COLUMN_TYPE, '''', '') AS enum_values
+        $this->query(
+            "SELECT 
+                REPLACE(COLUMN_TYPE, '''', '') AS enum_values
             FROM information_schema.COLUMNS 
-            WHERE TABLE_NAME = :table 
-            AND COLUMN_NAME = :column
-        ");
+            WHERE 
+                TABLE_NAME = :table AND 
+                COLUMN_NAME = :column"
+        );
 
         $this->bind('table', $table);
         $this->bind('column', $column);
@@ -191,6 +193,16 @@ class Database
     }
 
     /**
+     * Returns the number of rows affected by the last executed statement.
+     * 
+     * @return int Number of affected rows.
+     */
+    public function rowCount(): int
+    {
+        return $this->stmt->rowCount();
+    }
+
+    /**
      * Begins a database transaction.
      *
      * @return bool True on success.
@@ -221,6 +233,19 @@ class Database
     public function rollback(): bool
     {
         return $this->dbh->rollBack();
+    }
+
+    /**
+     * Adds a parameter to the write operation log without binding it to the statement.
+     *
+     * @param string $parameter Log parameter name.
+     * @param mixed  $value     Log parameter value.
+     *
+     * @return void
+     */
+    public function addLogParameter(string $parameter, mixed $value): void
+    {
+        $this->logParameters[$parameter] = $value;
     }
 
     /**

@@ -39,12 +39,12 @@ class Display
         }
 
         echo <<<HTML
-            <div class="{$colClass}">
-                {$label}
-                {$inputGroupStart}
-                    <{$element} id="{$field}" class="form-control {$classes}" {$attributes} disabled>{$content}</{$element}>
-                    {$buttonGroup}
-                {$inputGroupEnd}
+            <div class="$colClass">
+                $label
+                $inputGroupStart
+                    <$element id="$field" class="form-control $classes" $attributes disabled>$content</$element>
+                    $buttonGroup
+                $inputGroupEnd
             </div>
         HTML;
     }
@@ -74,14 +74,14 @@ class Display
     {
         $group = '';
         foreach ($buttons as $button) {
-            $group .= '
+            $group .= "
             <a 
-                class="btn ' . $button['class'] . '"
-                href="' . $button['href'] . '" 
-                aria-label="' . $button['aria-label'] . '" 
-                ' . ($button['attributes'] ?? '') . '>
-                <i class="bi ' . $button['icon'] . '"></i>
-            </a>';
+                class='btn {$button['class']}'
+                href='{$button['href']}' 
+                aria-label='{$button['aria-label']}' 
+                " . ($button['attributes'] ?? '') . ">
+                <i class='bi {$button['icon']}'></i>
+            </a>";
         }
         return $group;
     }
@@ -143,6 +143,6 @@ class Display
      */
     public static function textarea(array $data, string $field, string $displayText, string $colClass, string $classes = ''): void
     {
-        self::render($data, $field, $displayText, $colClass, 'textarea', classes: $classes . ' form-textarea');
+        self::render($data, $field, $displayText, $colClass, 'textarea', classes: "$classes form-textarea");
     }
 }

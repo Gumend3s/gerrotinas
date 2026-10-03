@@ -37,7 +37,8 @@ jQuery(document).ready(function () {
         Swal.fire({
             title: $(this).data('title'),
             text: $(this).data('text'),
-            icon: "error",
+            html: $(this).data('html'),
+            icon: $(this).data('icon'),
             showCancelButton: true,
             confirmButtonColor: "#00194F",
             cancelButtonColor: "#d33",
@@ -70,7 +71,7 @@ jQuery(document).ready(function () {
         });
     });
 
-    $('#zip_code').on('input', function (e) {
+    $('.zip_code').on('input', function (e) {
         const cep = e.target.value.replace(/[^\d]/g, '');
 
         if (cep.length >= 8) {
@@ -156,7 +157,7 @@ jQuery(document).ready(function () {
         imageObjectUrl = URL.createObjectURL(file);
 
         image.find('.image-preview')
-            .attr('src', URL.createObjectURL(file))
+            .attr('src', imageObjectUrl)
             .removeClass('d-none');
 
         image.find('.image-placeholder')

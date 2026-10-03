@@ -46,21 +46,27 @@ class UserModel
     }
 
     /**
-     * Returns a user by the specified searchable field.
+     * Returns a user matching the specified searchable fields.
      *
-     * @param int|string $value      Value to search.
-     * @param string     $field      Search field.
-     * @param bool       $activeOnly Whether to return only active users.
+     * Filters the search values to the supported searchable fields and optionally
+     * restricts the search to active users.
      *
-     * @return object|false User object if found, otherwise false.
+     * @param array $searchValues Searchable field values.
+     * @param bool  $activeOnly   Whether to restrict the search to active users.
+     *
+     * @return object|false User data object if found, otherwise false.
      */
-    public function findBy(int|string $value, string $field = 'id', bool $activeOnly = false): object|false
+    public function findBy(array $searchValues, bool $activeOnly = false): object|false
     {
-        if (!in_array($field, self::SEARCHABLE_FIELDS, true)) return false;
+        $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
+
+        if (empty($searchValues)) return false;
+
+        $fields = array_keys($searchValues);
+        $conditions = implode(' AND ', array_map(fn($field) => "U.$field = :$field", $fields));
 
         $this->db->query(
-            "
-            SELECT 
+            "SELECT 
                 U.id, 
                 U.name, 
                 U.cpf, 
@@ -69,12 +75,11 @@ class UserModel
                 U.status, 
                 U.password 
             FROM users U 
-            WHERE 
-                U.{$field} = :value
-                " . ($activeOnly ? ' AND U.status = :status' : '')
+            WHERE
+                $conditions" . ($activeOnly ? ' AND U.status = :status' : '')
         );
 
-        $this->db->bind("value", $value);
+        $this->db->bindAll($searchValues);
         if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
@@ -87,8 +92,20 @@ class UserModel
      */
     public function getActive(): array|false
     {
-        $this->db->query("SELECT U.id, U.name, U.cpf, U.department, U.level FROM users U WHERE U.status = 'ACTIVE' ORDER BY FIELD(U.level, 'BASIC', 'INTERMEDIATE', 'ADVANCED', 'ADMINISTRATOR') DESC");
-        
+        $this->db->query(
+            "SELECT 
+                U.id, 
+                U.name, 
+                U.cpf, 
+                U.department, 
+                U.level 
+            FROM users U 
+            WHERE 
+                U.status = 'ACTIVE' 
+            ORDER BY 
+                FIELD(U.level, 'BASIC', 'INTERMEDIATE', 'ADVANCED', 'ADMINISTRATOR') DESC"
+        );
+
         return $this->db->fetchAllRows();
     }
 
@@ -112,15 +129,15 @@ class UserModel
         $keys = array_keys($fields);
         $queryFields = implode(', ', array_map(fn($k) => "$k = :$k", $keys));
 
-        $this->db->query("
-            UPDATE users
+        $this->db->query(
+            "UPDATE users
             SET 
-            " . $queryFields . "
-            WHERE id = :id
-        ");
+                $queryFields
+            WHERE 
+                id = :id"
+        );
 
         $this->db->bindAll($fields);
-
         $this->db->bind('id', $id);
 
         return $this->db->execute();
@@ -143,10 +160,10 @@ class UserModel
 
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
-        $this->db->query("
-            INSERT INTO users(". implode(', ', self::CREATABLE_FIELDS) .") 
-            VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")
-        ");
+        $this->db->query(
+            "INSERT INTO users(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
+        );
 
         $this->db->bindAll($fields);
 
@@ -164,12 +181,13 @@ class UserModel
      */
     public function softDelete(int|string $id): bool
     {
-        $this->db->query("
-            UPDATE users
+        $this->db->query(
+            "UPDATE users
             SET 
-            status = :status
-            WHERE id = :id
-        ");
+                status = :status
+            WHERE 
+                id = :id"
+        );
 
         $this->db->bind('id', $id);
         $this->db->bind('status', 'DELETED');
@@ -178,14 +196,16 @@ class UserModel
     }
 
     /**
-     * Returns active users prepared for CSV export.
+     * Retrieves active users for CSV export.
+     *
+     * Returns the user data required for the export, ordered by user level.
      *
      * @return array|false List of users or false on failure.
      */
     public function export(): array|false
     {
-        $this->db->query("
-            SELECT 
+        $this->db->query(
+            "SELECT 
                 U.id, 
                 U.name, 
                 U.cpf, 
@@ -197,8 +217,10 @@ class UserModel
             FROM users U 
             WHERE 
                 U.status = 'ACTIVE' 
-            ORDER BY FIELD(U.level, 'BASIC', 'INTERMEDIATE', 'ADVANCED', 'ADMINISTRATOR') DESC
-        ");
+            ORDER BY 
+                FIELD(U.level, 'BASIC', 'INTERMEDIATE', 'ADVANCED', 'ADMINISTRATOR') DESC"
+        );
+        
         return $this->db->fetchAllRows();
     }
 }

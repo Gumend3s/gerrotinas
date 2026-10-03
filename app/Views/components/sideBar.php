@@ -10,6 +10,7 @@
         </div>
         <div class="collapse" id="menu-records">
             <a href="<?= Helper::escape(APP_BASE_URL) . '/users' ?>" class="submenu-item">Usuários</a>
+            <a href="<?= Helper::escape(APP_BASE_URL) . '/business' ?>" class="submenu-item">Empresas</a>
         </div>
     </nav>
     <div class="px-3 py-2 text-center">

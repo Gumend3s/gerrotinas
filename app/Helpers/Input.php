@@ -21,8 +21,8 @@ class Input
     private static function render(array $data, string $field, string $displayText, string $placeholder, string $colClass, string $element, string $type = 'text', string $attributes = '', string $classes = '', bool $required = true, array $buttons = []): void
     {
         $value = $type !== 'file' ? Helper::escape($data[$field] ?? '') : '';
-        $errorMessage = Helper::escape($data[$field . '_error'] ?? '');
-        $hasError = empty($data[$field . '_error']) ? '' : 'is-invalid';
+        $errorMessage = Helper::escape($data["{$field}_error"] ?? '');
+        $hasError = empty($data["{$field}_error"]) ? '' : 'is-invalid';
         $attributes .= ($required ? ' required' : '');
         $requiredIndicator = $required ? '<sup class="text-danger">*</sup>' : '';
         $buttonGroup = self::buildButtonGroup($buttons);
@@ -43,15 +43,15 @@ class Input
         }
 
         echo <<<HTML
-            <div class="{$colClass}">
-                <label for="{$field}">{$displayText}: {$requiredIndicator}</label>
-                {$inputGroupStart}
-                    <{$element} name="{$field}" id="{$field}" placeholder="{$placeholder}" class="form-control {$classes} {$hasError}" {$attributes}>{$content}</{$element}>
-                    {$buttonGroup}
+            <div class="$colClass">
+                <label for="$field">$displayText: $requiredIndicator</label>
+                $inputGroupStart
+                    <$element name="$field" id="$field" placeholder="$placeholder" class="form-control $classes $hasError" $attributes>$content</$element>
+                    $buttonGroup
                     <div class="invalid-feedback">
-                        {$errorMessage}
+                        $errorMessage
                     </div>
-                {$inputGroupEnd}
+                $inputGroupEnd
             </div>
         HTML;
     }
@@ -81,14 +81,14 @@ class Input
     {
         $group = '';
         foreach ($buttons as $button) {
-            $group .= '
+            $group .= "
             <a 
-                class="btn ' . $button['class'] . '"
-                href="' . $button['href'] . '" 
-                aria-label="' . $button['aria-label'] . '" 
-                ' . ($button['attributes'] ?? '') . '>
-                <i class="bi ' . $button['icon'] . '"></i>
-            </a>';
+                class='btn {$button['class']}'
+                href='{$button['href']}' 
+                aria-label='{$button['aria-label']}' 
+                " . ($button['attributes'] ?? '') . ">
+                <i class='bi {$button['icon']}'></i>
+            </a>";
         }
         return $group;
     }
@@ -258,7 +258,7 @@ class Input
      */
     public static function textarea(array $data, string $field, string $displayText, string $placeholder, string $colClass, string $classes = '', bool $required = false): void
     {
-        self::render($data, $field, $displayText, $placeholder, $colClass, 'textarea', classes: $classes . ' form-textarea', required: $required);
+        self::render($data, $field, $displayText, $placeholder, $colClass, 'textarea', classes: "$classes form-textarea", required: $required);
     }
 
     /**
@@ -300,17 +300,17 @@ class Input
      */
     public static function image(array $data, string $field, string $colClass, string $classes = '', string $src = ''): void
     {
-        $url = !empty($data[$field . '_url']) ? '<input type="hidden" name="' . $field . '_url" value="' . Helper::escape($data[$field . '_url']) . '">' : '';
+        $url = !empty($data["{$field}_url"]) ? '<input type="hidden" name="' . $field . '_url" value="' . Helper::escape($data["{$field}_url"]) . '">' : '';
         $previewClass = empty($src) ? 'd-none' : '';
         $placeholderClass = empty($src) ? '' : 'd-none';
 
         echo <<<HTML
-            <div id="{$field}" class="image-container {$classes} {$colClass}">
-                <img class="image-preview {$previewClass}" src="{$src}" alt="">
-                <div class="image-placeholder d-flex bg-gray text-center align-items-center justify-content-center {$placeholderClass}">
+            <div id="$field" class="image-container $classes $colClass">
+                <img class="image-preview $previewClass" src="$src" alt="">
+                <div class="image-placeholder d-flex bg-gray text-center align-items-center justify-content-center $placeholderClass">
                     Selecione uma imagem
                 </div>
-                {$url}
+                $url
             </div>
         HTML;
     }
@@ -359,8 +359,8 @@ class Input
      */
     public static function select(array $data, string $field, string $displayText, array $options, string $colClass, string $classes = '', string $attributes = '', bool $required = true, array $buttons = []): void
     {
-        $errorMessage = Helper::escape($data[$field . '_error'] ?? '');
-        $hasError = empty($data[$field . '_error']) ? '' : 'is-invalid';
+        $errorMessage = Helper::escape($data["{$field}_error"] ?? '');
+        $hasError = empty($data["{$field}_error"]) ? '' : 'is-invalid';
         $requiredIndicator = $required ? '<sup class="text-danger">*</sup>' : '';
         $buttonGroup = self::buildButtonGroup($buttons);
 
@@ -378,17 +378,17 @@ class Input
         }
 
         echo <<<HTML
-            <div class="{$colClass}">
-                <label for="{$field}">{$displayText}: {$requiredIndicator}</label>
-                {$inputGroupStart}
-                    <select name="{$field}" id="{$field}" class="form-select {$classes} {$hasError}" required {$attributes}>
-                    {$optionsHtml}
+            <div class="$colClass">
+                <label for="$field">$displayText: $requiredIndicator</label>
+                $inputGroupStart
+                    <select name="$field" id="$field" class="form-select $classes $hasError" required $attributes>
+                    $optionsHtml
                     </select>
-                    {$buttonGroup}
+                    $buttonGroup
                     <div class="invalid-feedback">
-                        {$errorMessage}
+                        $errorMessage
                     </div>
-                {$inputGroupEnd}
+                $inputGroupEnd
             </div>
         HTML;
     }

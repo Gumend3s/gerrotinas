@@ -34,8 +34,8 @@ class Page extends Controller
                 'cpf' => isset($_POST['cpf']) ? trim(filter_var($_POST['cpf'], FILTER_SANITIZE_SPECIAL_CHARS)) : '',
                 'password' => isset($_POST['password']) ? (string)$_POST['password'] : ''
             ];
-echo Helper::generatePassword();
-            $data['error'] = empty($data['cpf']) || empty($data['password']) || !($user = $this->userModel->findBy($data['cpf'], 'cpf')) || !password_verify($data['password'], $user->password) || $user->status !== 'ACTIVE';
+
+            $data['error'] = empty($data['cpf']) || empty($data['password']) || !($user = $this->userModel->findBy(['cpf' => $data['cpf']])) || !password_verify($data['password'], $user->password) || $user->status !== 'ACTIVE';
 
             if ($data['error']) {
                 if (!empty($data['cpf']) && !empty($data['password'])) Helper::log('LOGIN', 'FAILED', ['cpf' => $data['cpf'], 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'], 'auth.log');
