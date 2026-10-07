@@ -3,13 +3,13 @@
 final class Label
 {
     private const ENUM_LABELS = [
-        'department' => ['EXECUTIVE' => 'Diretoria', 'OPERATIONS' => 'Operação', 'HR' => 'Recrutamento e Seleção', 'PAYROLL' => 'Departamento Pessoal', 'FINANCE' => 'Financeiro', 'SALES' => 'Comercial', 'TECHNOLOGY' => 'TI'],
-        'level' => ['BASIC' => 'Básico', 'INTERMEDIATE' => 'Intermediário', 'ADVANCED' => 'Avançado', 'ADMINISTRATOR' => 'Administrador'],
+        'level' => ['EMPLOYEE' => 'Funcionário', 'ADMINISTRATOR' => 'Administrador', 'MASTER' => 'Dono'],
         'status' => ['ACTIVE' => 'Ativo', 'DELETED' => 'Deletado'],
     ];
 
     private const FIELD_LABELS = [
-        'user' => ['id' => 'ID', 'name' => 'Nome', 'cpf' => 'CPF', 'department' => 'Departamento', 'level' => 'Nível', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
+        'user' => ['id' => 'ID', 'name' => 'Nome', 'cpf' => 'CPF', 'business_name' => 'Empresa', 'level' => 'Nível', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
+        'business' => ['id' => 'ID', 'trade_name' => 'Nome Fantasia', 'legal_name' => 'Razão Social', 'cnpj' => 'CNPJ', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
     ];
 
     /**

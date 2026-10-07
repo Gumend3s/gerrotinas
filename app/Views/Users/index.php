@@ -44,7 +44,7 @@
                             <td>
                                 <?= Helper::abbreviateName($user->name) ?>
                                 <div class="d-md-none small mt-1 text-muted">
-                                    <?= Label::enum('department', $user->department) ?>
+                                    <?= Helper::escape($user->business_name) ?>
                                     ·
                                     <span class="<?= Helper::getMappedCssClass('text', 'level', $user->level) ?>">
                                         <?= Label::enum('level', $user->level) ?>
@@ -55,7 +55,7 @@
                                 <?= Helper::escape($user->cpf) ?>
                             </td>
                             <td class="d-none d-md-table-cell">
-                                <?= Label::enum('department', $user->department) ?>
+                                <?= Helper::escape($user->business_name) ?>
                             </td>
                             <td class="d-none d-md-table-cell text-center">
                                 <span class="badge rounded-pill <?= Helper::getMappedCssClass('badge', 'level', $user->level) ?>" style="width: 90px">

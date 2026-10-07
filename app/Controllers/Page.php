@@ -49,7 +49,8 @@ class Page extends Controller
                 unset($_SESSION[APP_SESSION_KEY]['csrf_token']);
                 $_SESSION[APP_SESSION_KEY]['user_id'] = $user->id;
                 $_SESSION[APP_SESSION_KEY]['user_name'] = $user->name;
-                $_SESSION[APP_SESSION_KEY]['user_department'] = $user->department;
+                $_SESSION[APP_SESSION_KEY]['user_business_id'] = $user->business_id;
+                $_SESSION[APP_SESSION_KEY]['user_business_name'] = $user->business_name;
                 $_SESSION[APP_SESSION_KEY]['user_level'] = $user->level;
                 Helper::redirect('./');
             }

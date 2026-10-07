@@ -13,7 +13,7 @@ class UserModel
         'name',
         'cpf',
         'password',
-        'department',
+        'business_id',
         'level'
     ];
     private const UPDATABLE_FIELDS = [
@@ -24,16 +24,6 @@ class UserModel
         'id',
         'cpf'
     ];
-
-    /**
-     * Returns the available user departments defined in the database schema.
-     *
-     * @return string Comma-separated enum values.
-     */
-    public function getDepartments(): string
-    {
-        return $this->db->getEnumValues('users', 'department');
-    }
 
     /**
      * Returns the available user access levels defined in the database schema.
@@ -70,11 +60,14 @@ class UserModel
                 U.id, 
                 U.name, 
                 U.cpf, 
-                U.department, 
+                U.business_id, 
+                B.trade_name as business_name, 
                 U.level, 
                 U.status, 
                 U.password 
             FROM users U 
+            INNER JOIN businesses B ON
+                B.id = U.business_id
             WHERE
                 $conditions" . ($activeOnly ? ' AND U.status = :status' : '')
         );
@@ -97,13 +90,15 @@ class UserModel
                 U.id, 
                 U.name, 
                 U.cpf, 
-                U.department, 
+                B.trade_name as business_name, 
                 U.level 
             FROM users U 
+            INNER JOIN businesses B ON
+                B.id = U.business_id
             WHERE 
                 U.status = 'ACTIVE' 
             ORDER BY 
-                FIELD(U.level, 'BASIC', 'INTERMEDIATE', 'ADVANCED', 'ADMINISTRATOR') DESC"
+                FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR', 'MASTER') DESC"
         );
 
         return $this->db->fetchAllRows();
@@ -209,16 +204,18 @@ class UserModel
                 U.id, 
                 U.name, 
                 U.cpf, 
-                U.department, 
+                B.trade_name as business_name, 
                 U.level, 
                 U.created_at, 
                 U.updated_at, 
                 U.status 
             FROM users U 
+            INNER JOIN businesses B ON
+                B.id = U.business_id
             WHERE 
                 U.status = 'ACTIVE' 
             ORDER BY 
-                FIELD(U.level, 'BASIC', 'INTERMEDIATE', 'ADVANCED', 'ADMINISTRATOR') DESC"
+                FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR', 'MASTER') DESC"
         );
         
         return $this->db->fetchAllRows();

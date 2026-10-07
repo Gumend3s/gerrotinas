@@ -13,37 +13,28 @@ class Auth
     }
 
     /**
-     * Checks whether the logged-in user is authorized according to the given department-to-minimum-level rules map.
+     * Checks whether the logged-in user is authorized according to the given allowed levels array.
      *
-     * @param  array<string,string> $rules Map of department => minimum required level.
-     * @return bool                 True if the user is authorized, false otherwise.
+     * @param  array $allowed_levels Array with allowed levels.
+     * @return bool  True   if the user is authorized, false otherwise.
      */
-    public static function hasAccess(array $rules): bool
+    public static function hasAccess(array $allowed_levels): bool
     {
         if (!self::isLoggedIn() || empty($_SERVER['HTTP_REFERER'])) return false;
 
-        $permissionLevels = ['BASIC', 'INTERMEDIATE', 'ADVANCED', 'ADMINISTRATOR'];
-        $department = $_SESSION[APP_SESSION_KEY]['user_department'] ?? '';
-        $level = $_SESSION[APP_SESSION_KEY]['user_level'] ?? '';
-
         if (self::canBypass()) return true;
-        if (!array_key_exists($department, $rules)) return false;
-
-        $weights = array_flip($permissionLevels);
-        $userWeight = $weights[$level] ?? -1;
-        $requiredWeight = $weights[$rules[$department]] ?? -1;
-
-        return $userWeight >= $requiredWeight;
+        
+        return in_array($_SESSION[APP_SESSION_KEY]['user_level'] ?? '', $allowed_levels);
     }
 
     /**
      * Determines whether the current user can bypass access level checks.
      *
-     * @return bool True if the current user's department can bypass access checks.
+     * @return bool True if the current user's level can bypass access checks.
      */
     public static function canBypass(): bool
     {
-        return in_array($_SESSION[APP_SESSION_KEY]['user_department'], ['TECHNOLOGY', 'EXECUTIVE'], true);
+        return in_array($_SESSION[APP_SESSION_KEY]['user_level'], ['MASTER'], true);
     }
 
     /**

@@ -4,9 +4,10 @@ class Users extends Controller
 {
     private const MODELS = [
         'userModel' => 'UserModel',
+        'businessModel' => 'BusinessModel',
     ];
 
-    private const REQUIRED_ACCESS = ['OPERATIONS' => 'ADMINISTRATOR', 'HR' => 'ADMINISTRATOR', 'PAYROLL' => 'ADMINISTRATOR', 'FINANCE' => 'ADMINISTRATOR', 'SALES' => 'ADMINISTRATOR'];
+    private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
 
     public function __construct()
     {
@@ -39,11 +40,11 @@ class Users extends Controller
 
         $currentUser = $_SESSION[APP_SESSION_KEY];
 
-        $hasRestrictedDepartment = in_array($user->department, ['TECHNOLOGY', 'EXECUTIVE'], true);
-        $isDifferentDepartment = $user->department !== $currentUser['user_department'];
+        $hasRestrictedLevel = in_array($user->level, ['MASTER'], true);
+        $isDifferentBusiness = $user->business_id !== $currentUser['user_business_id'];
         $isOwnUser = $user->id == $currentUser['user_id'];
 
-        if ($hasRestrictedDepartment || $isDifferentDepartment || $isOwnUser) {
+        if ($hasRestrictedLevel || $isDifferentBusiness || $isOwnUser) {
             Alert::flash('users', 'Você não possui permissão para editar esse usuário', 'error');
             Helper::redirect('users');
         }
@@ -79,7 +80,7 @@ class Users extends Controller
         $data = [
             'id' => $id,
             'isEditing' => $id !== null,
-            'canChangeDepartment' => Auth::canBypass(),
+            'canChangeBusiness' => Auth::canBypass(),
             'isOwnUser' => $_SESSION[APP_SESSION_KEY]['user_id'] == $id,
         ];
 
@@ -147,7 +148,7 @@ class Users extends Controller
     /**
      * Exports active users to a CSV file.
      *
-     * Retrieves the user data, converts department, level, and status values to their
+     * Retrieves the user data, converts business, level, and status values to their
      * display labels, and exports the records using the corresponding field labels.
      *
      * @return void
@@ -157,12 +158,11 @@ class Users extends Controller
         $users = $this->userModel->export();
         if ($users) {
             foreach ($users as $user) {
-                if (isset($user->department)) $user->department = Label::enum('department', $user->department);
                 if (isset($user->level)) $user->level = Label::enum('level', $user->level);
                 if (isset($user->status)) $user->status = Label::enum('status', $user->status);
             }
 
-            $header = array_map(fn($field) => Label::field('user', $field), ['id', 'name', 'cpf', 'department', 'level', 'status', 'updated_at', 'created_at']);
+            $header = array_map(fn($field) => Label::field('user', $field), ['id', 'name', 'cpf', 'business_name', 'level', 'status', 'updated_at', 'created_at']);
             $fileName = "Usuários";
 
             Helper::exportCsv($users, $header, $fileName);
@@ -176,17 +176,19 @@ class Users extends Controller
      * Returns the data required to initialize the view.
      *
      * Includes values that are not directly related to the form fields,
-     * such as available departments and permission levels.
+     * such as available business_ids and permission levels.
      *
      * @return array View initialization data.
      */
     private function getViewData(): array
     {
-        $departments = Auth::canBypass() ? Helper::extractEnumValues($this->userModel->getDepartments()) : [];
+        $businesses = Auth::canBypass() ? $this->businessModel->getActive() : [];
         $levels = Helper::extractEnumValues($this->userModel->getLevels());
 
+        if (!Auth::canBypass()) $levels = array_diff($levels, ["MASTER"]);
+
         return [
-            'departments' => array_combine($departments, array_map(fn($department) => Label::enum('department', $department), $departments)),
+            'businesses' => array_column($businesses, 'trade_name', 'id'),
             'levels' => array_combine($levels, array_map(fn($level) => Label::enum('level', $level), $levels)),
         ];
     }
@@ -208,7 +210,8 @@ class Users extends Controller
         return [
             'name' => $user->name ?? '',
             'cpf' => $user->cpf ?? '',
-            'department' => Auth::canBypass() ? ($user->department ?? '') : Label::enum('department', $_SESSION[APP_SESSION_KEY]['user_department']),
+            'business_id' => Auth::canBypass() ? ($user->business_id ?? '') : '',
+            'business_name' => !Auth::canBypass() ? $_SESSION[APP_SESSION_KEY]['user_business_name'] : '',
             'level' => $user->level ?? '',
         ];
     }
@@ -229,7 +232,7 @@ class Users extends Controller
             'shouldReactivate' => false,
             'name' => Helper::standardizeName($formInput['name'] ?? ''),
             'cpf' => trim($formInput['cpf'] ?? ''),
-            'department' => (Auth::canBypass() ? trim($formInput['department'] ?? '') : $_SESSION[APP_SESSION_KEY]['user_department']),
+            'business_id' => (Auth::canBypass() ? trim($formInput['business_id'] ?? '') : $_SESSION[APP_SESSION_KEY]['user_business_id']),
             'level' => trim($formInput['level'] ?? ''),
         ];
     }
@@ -248,8 +251,8 @@ class Users extends Controller
     {
         $data['name_error'] = empty($data['name']) ? "Preencha o campo Nome" : (!Validate::name($data['name']) ? 'O nome possui caracteres inválidos' : null);
         $data['cpf_error'] = empty($data['cpf']) ? "Preencha o campo CPF" : (!Validate::cpf($data['cpf']) ? 'Insira um CPF válido' : null);
-        $data['department_error'] = empty($data['department']) ? "Escolha um departamento" : (!Auth::canBypass() && in_array($data['department'], ['TECHNOLOGY', 'EXECUTIVE'], true) ? 'Você não possui permissão para isso' : null);
-        $data['level_error'] = empty($data['level']) ? "Escolha um nível de permissão" : null;
+        $data['business_id_error'] = empty($data['business_id']) ? "Escolha uma empresa" : null;
+        $data['level_error'] = empty($data['level']) ? "Escolha um nível de permissão" : (!Auth::canBypass() && in_array($data['level'], ['MASTER'], true) ? 'Você não possui permissão para isso' : null);
 
         if ($data['cpf_error'] === null && ($existingUser = $this->userModel->findBy(['cpf' => $data['cpf']])) && $existingUser->id != $data['id']) {
             if ($existingUser->status === 'DELETED' && !$data['isEditing']) {

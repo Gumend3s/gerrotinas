@@ -14,16 +14,16 @@
 
             <?php Input::numeric($data, 'cpf', 'CPF', 'Ex: 000.000.000-00', 'col-12 col-sm-4', classes: 'cpf') ?>
 
-            <?php if ($canChangeDepartment): ?>
+            <?php if ($canChangeBusiness): ?>
                 <?= Input::select(
                     $data,
-                    'department',
-                    'Departamento',
-                    $departments,
+                    'business_id',
+                    'Empresa',
+                    $businesses,
                     'col-12 col-sm-6'
                 ) ?>
             <?php else: ?>
-                <?php Display::text($data, 'department', 'Departamento', 'col-12 col-sm-6') ?>
+                <?php Display::text($data, 'business_name', 'Empresa', 'col-12 col-sm-6') ?>
             <?php endif; ?>
 
             <?= Input::select(

@@ -201,7 +201,7 @@ class Helper
     public static function getMappedCssClass(string|array $classPrefixes, string $mapKey, string $value): string
     {
         $maps = [
-            'level' => ['BASIC' => 'green', 'INTERMEDIATE' => 'yellow', 'ADVANCED' => 'orange', 'ADMINISTRATOR' => 'red'],
+            'level' => ['EMPLOYEE' => 'green', 'ADMINISTRATOR' => 'yellow', 'MASTER' => 'red'],
             'yes/no' => ['1' => 'green', '0' => 'red'],
         ];
 
