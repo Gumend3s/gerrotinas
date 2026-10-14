@@ -105,6 +105,41 @@ class UserModel
     }
 
     /**
+     * Retrieves active employees and administrators associated with a specific business.
+     *
+     * Results are ordered by user access level, with administrators listed
+     * after employees.
+     *
+     * @param int|string $business_id Business ID used to filter the users.
+     *
+     * @return array|false List of users associated with the business or false on failure.
+     */
+    public function getActiveByBusiness(int|string $business_id): array|false
+    {
+        $this->db->query(
+            "SELECT 
+                U.id, 
+                U.name, 
+                U.cpf, 
+                B.trade_name as business_name, 
+                U.level 
+            FROM users U 
+            INNER JOIN businesses B ON
+                B.id = U.business_id
+            WHERE 
+                U.status = 'ACTIVE' AND
+                U.level IN ('EMPLOYEE', 'ADMINISTRATOR') AND
+                U.business_id = :business_id
+            ORDER BY 
+                FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR') DESC"
+        );
+
+        $this->db->bind('business_id', $business_id);
+
+        return $this->db->fetchAllRows();
+    }
+
+    /**
      * Updates one or more user fields.
      *
      * Only the provided updatable fields are included in the generated
@@ -217,7 +252,45 @@ class UserModel
             ORDER BY 
                 FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR', 'MASTER') DESC"
         );
-        
+
+        return $this->db->fetchAllRows();
+    }
+
+    /**
+     * Retrieves active employees and administrators associated with a specific business for CSV export.
+     *
+     * Returns the user data required for the export, including creation and
+     * update timestamps and status, ordered by user access level.
+     *
+     * @param int|string $business_id Business ID used to filter the users.
+     *
+     * @return array|false List of users for export or false on failure.
+     */
+    public function exportByBusiness(int|string $business_id): array|false
+    {
+        $this->db->query(
+            "SELECT 
+                U.id, 
+                U.name, 
+                U.cpf, 
+                B.trade_name as business_name, 
+                U.level, 
+                U.created_at, 
+                U.updated_at, 
+                U.status 
+            FROM users U 
+            INNER JOIN businesses B ON
+                B.id = U.business_id
+            WHERE 
+                U.status = 'ACTIVE' AND
+                U.level IN ('EMPLOYEE', 'ADMINISTRATOR') AND
+                U.business_id = :business_id
+            ORDER BY 
+                FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR') DESC"
+        );
+
+        $this->db->bind('business_id', $business_id);
+
         return $this->db->fetchAllRows();
     }
 }

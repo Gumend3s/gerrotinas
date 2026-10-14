@@ -62,7 +62,7 @@ class Users extends Controller
      */
     public function index(): void
     {
-        $this->view('users/index', ['users' => $this->userModel->getActive()]);
+        $this->view('users/index', ['users' => $_SESSION[APP_SESSION_KEY]['user_level'] === 'MASTER' ? $this->userModel->getActive() : $this->userModel->getActiveByBusiness($_SESSION[APP_SESSION_KEY]['user_business_id'])]);
     }
 
     /**
@@ -155,7 +155,7 @@ class Users extends Controller
      */
     public function export(): void
     {
-        $users = $this->userModel->export();
+        $users = $_SESSION[APP_SESSION_KEY]['user_level'] === 'MASTER' ? $this->userModel->export() : $this->userModel->exportByBusiness($_SESSION[APP_SESSION_KEY]['user_business_id']);
         if ($users) {
             foreach ($users as $user) {
                 if (isset($user->level)) $user->level = Label::enum('level', $user->level);
@@ -163,7 +163,7 @@ class Users extends Controller
             }
 
             $header = array_map(fn($field) => Label::field('user', $field), ['id', 'name', 'cpf', 'business_name', 'level', 'status', 'updated_at', 'created_at']);
-            $fileName = "Usuários";
+            $fileName = "Usuários" . ($_SESSION[APP_SESSION_KEY]['user_level'] !== 'MASTER' ? " - {$_SESSION[APP_SESSION_KEY]['user_business_name']}" : '');
 
             Helper::exportCsv($users, $header, $fileName);
         } else {
