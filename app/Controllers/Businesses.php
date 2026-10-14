@@ -6,7 +6,7 @@ class Businesses extends Controller
         'businessModel' => 'BusinessModel',
     ];
 
-    private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
+    private const REQUIRED_ACCESS = ['MASTER'];
 
     public function __construct()
     {

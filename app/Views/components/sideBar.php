@@ -10,7 +10,7 @@
         </div>
         <div class="collapse" id="menu-records">
             <a href="<?= Helper::escape(APP_BASE_URL) . '/users' ?>" class="submenu-item">Usuários</a>
-            <a href="<?= Helper::escape(APP_BASE_URL) . '/businesses' ?>" class="submenu-item">Empresas</a>
+            <?php if ($_SESSION[APP_SESSION_KEY]['user_level'] === 'MASTER'): ?> <a href="<?= Helper::escape(APP_BASE_URL) . '/businesses' ?>" class="submenu-item">Empresas</a><?php endif; ?>
         </div>
     </nav>
     <div class="px-3 py-2 text-center">
