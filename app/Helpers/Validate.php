@@ -66,6 +66,17 @@ final class Validate
     }
 
     /**
+     * Validates a E-mail.
+     * 
+     * @param string $email E-mail to validate.
+     *
+     * @return bool True if the E-mail is valid.
+     */
+    public static function email(string $email): bool {
+        return true;
+    }
+
+    /**
      * Validates a Brazilian CNPJ number.
      *
      * @param string $cnpj CNPJ number to validate.

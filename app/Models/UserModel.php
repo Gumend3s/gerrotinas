@@ -11,7 +11,7 @@ class UserModel
 
     private const CREATABLE_FIELDS = [
         'name',
-        'cpf',
+        'email',
         'password',
         'business_id',
         'level'
@@ -22,7 +22,7 @@ class UserModel
     ];
     private const SEARCHABLE_FIELDS = [
         'id',
-        'cpf'
+        'email'
     ];
 
     /**
@@ -59,7 +59,7 @@ class UserModel
             "SELECT 
                 U.id, 
                 U.name, 
-                U.cpf, 
+                U.email, 
                 U.business_id, 
                 B.trade_name as business_name, 
                 U.level, 
@@ -89,7 +89,7 @@ class UserModel
             "SELECT 
                 U.id, 
                 U.name, 
-                U.cpf, 
+                U.email, 
                 B.trade_name as business_name, 
                 U.level 
             FROM users U 
@@ -120,7 +120,7 @@ class UserModel
             "SELECT 
                 U.id, 
                 U.name, 
-                U.cpf, 
+                U.email, 
                 B.trade_name as business_name, 
                 U.level 
             FROM users U 
@@ -238,7 +238,7 @@ class UserModel
             "SELECT 
                 U.id, 
                 U.name, 
-                U.cpf, 
+                U.email, 
                 B.trade_name as business_name, 
                 U.level, 
                 U.created_at, 
@@ -272,7 +272,7 @@ class UserModel
             "SELECT 
                 U.id, 
                 U.name, 
-                U.cpf, 
+                U.email, 
                 B.trade_name as business_name, 
                 U.level, 
                 U.created_at, 

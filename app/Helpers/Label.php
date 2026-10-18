@@ -8,7 +8,7 @@ final class Label
     ];
 
     private const FIELD_LABELS = [
-        'user' => ['id' => 'ID', 'name' => 'Nome', 'cpf' => 'CPF', 'business_name' => 'Empresa', 'level' => 'Nível', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
+        'user' => ['id' => 'ID', 'name' => 'Nome', 'email' => 'E-mail', 'business_name' => 'Empresa', 'level' => 'Nível', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
         'business' => ['id' => 'ID', 'trade_name' => 'Nome Fantasia', 'legal_name' => 'Razão Social', 'cnpj' => 'CNPJ', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
     ];
 

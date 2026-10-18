@@ -69,7 +69,7 @@ class Users extends Controller
      * Creates or updates a user based on the provided ID.
      *
      * Handles user validation, permission checks, user creation,
-     * updates and automatic reactivation of deleted users with the same CPF.
+     * updates and automatic reactivation of deleted users with the same E-mail.
      *
      * @param int|string|null $id User ID for update, or null for creation.
      *
@@ -162,7 +162,7 @@ class Users extends Controller
                 if (isset($user->status)) $user->status = Label::enum('status', $user->status);
             }
 
-            $header = array_map(fn($field) => Label::field('user', $field), ['id', 'name', 'cpf', 'business_name', 'level', 'status', 'updated_at', 'created_at']);
+            $header = array_map(fn($field) => Label::field('user', $field), ['id', 'name', 'email', 'business_name', 'level', 'status', 'updated_at', 'created_at']);
             $fileName = "Usuários" . ($_SESSION[APP_SESSION_KEY]['user_level'] !== 'MASTER' ? " - {$_SESSION[APP_SESSION_KEY]['user_business_name']}" : '');
 
             Helper::exportCsv($users, $header, $fileName);
@@ -209,7 +209,7 @@ class Users extends Controller
 
         return [
             'name' => $user->name ?? '',
-            'cpf' => $user->cpf ?? '',
+            'email' => $user->email ?? '',
             'business_id' => Auth::canBypass() ? ($user->business_id ?? '') : '',
             'business_name' => !Auth::canBypass() ? $_SESSION[APP_SESSION_KEY]['user_business_name'] : '',
             'level' => $user->level ?? '',
@@ -231,7 +231,7 @@ class Users extends Controller
         return [
             'shouldReactivate' => false,
             'name' => Helper::standardizeName($formInput['name'] ?? ''),
-            'cpf' => trim($formInput['cpf'] ?? ''),
+            'email' => trim($formInput['email'] ?? ''),
             'business_id' => (Auth::canBypass() ? trim($formInput['business_id'] ?? '') : $_SESSION[APP_SESSION_KEY]['user_business_id']),
             'level' => trim($formInput['level'] ?? ''),
         ];
@@ -241,7 +241,7 @@ class Users extends Controller
      * Validates user form data.
      *
      * Adds validation errors, checks for duplicate user information,
-     * and handles automatic reactivation of deleted users with the same CPF.
+     * and handles automatic reactivation of deleted users with the same E-mail.
      *
      * @param array  $data User form data.
      *
@@ -250,15 +250,15 @@ class Users extends Controller
     private function validateFormData(array $data): array
     {
         $data['name_error'] = empty($data['name']) ? "Preencha o campo Nome" : (!Validate::name($data['name']) ? 'O nome possui caracteres inválidos' : null);
-        $data['cpf_error'] = empty($data['cpf']) ? "Preencha o campo CPF" : (!Validate::cpf($data['cpf']) ? 'Insira um CPF válido' : null);
+        $data['email_error'] = empty($data['email']) ? "Preencha o campo E-mail" : (!Validate::email($data['email']) ? 'Insira um E-mail válido' : null);
         $data['business_id_error'] = empty($data['business_id']) ? "Escolha uma empresa" : null;
         $data['level_error'] = empty($data['level']) ? "Escolha um nível de permissão" : (!Auth::canBypass() && in_array($data['level'], ['MASTER'], true) ? 'Você não possui permissão para isso' : null);
 
-        if ($data['cpf_error'] === null && ($existingUser = $this->userModel->findBy(['cpf' => $data['cpf']])) && $existingUser->id != $data['id']) {
+        if ($data['email_error'] === null && ($existingUser = $this->userModel->findBy(['email' => $data['email']])) && $existingUser->id != $data['id']) {
             if ($existingUser->status === 'DELETED' && !$data['isEditing']) {
                 $data['shouldReactivate'] = true;
                 $data['existingUser'] = $existingUser;
-            } else $data['cpf_error'] = 'Um usuário já possui esse CPF';
+            } else $data['email_error'] = 'Um usuário já possui esse E-mail';
         }
 
         return $data;
@@ -268,7 +268,7 @@ class Users extends Controller
      * Creates or updates a user based on the provided data.
      *
      * Handles user creation, updates and automatic reactivation
-     * of previously deleted users with the same CPF.
+     * of previously deleted users with the same E-mail.
      *
      * @param array  $data Validated user data.
      *

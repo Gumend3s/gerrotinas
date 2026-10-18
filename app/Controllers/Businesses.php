@@ -45,7 +45,7 @@ class Businesses extends Controller
      * Creates or updates a business based on the provided ID.
      *
      * Handles business validation, permission checks, business creation,
-     * updates and automatic reactivation of deleted businesses with the same CPF.
+     * updates and automatic reactivation of deleted businesses with the same E-mail.
      *
      * @param int|string|null $id User ID for update, or null for creation.
      *
@@ -179,7 +179,7 @@ class Businesses extends Controller
      * Validates business form data.
      *
      * Adds validation errors, checks for duplicate business information,
-     * and handles automatic reactivation of deleted businesses with the same CPF.
+     * and handles automatic reactivation of deleted businesses with the same E-mail.
      *
      * @param array  $data User form data.
      *
@@ -205,7 +205,7 @@ class Businesses extends Controller
      * Creates or updates a business based on the provided data.
      *
      * Handles business creation, updates and automatic reactivation
-     * of previously deleted businesses with the same CPF.
+     * of previously deleted businesses with the same E-mail.
      *
      * @param array  $data Validated business data.
      *

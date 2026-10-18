@@ -31,19 +31,19 @@ class Page extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!Auth::validateCsrf($_POST['csrf_token'] ?? null)) Helper::redirect('./');
             $data = [
-                'cpf' => isset($_POST['cpf']) ? trim(filter_var($_POST['cpf'], FILTER_SANITIZE_SPECIAL_CHARS)) : '',
+                'email' => isset($_POST['email']) ? trim(filter_var($_POST['email'], FILTER_SANITIZE_SPECIAL_CHARS)) : '',
                 'password' => isset($_POST['password']) ? (string)$_POST['password'] : ''
             ];
 
-            $data['error'] = empty($data['cpf']) || empty($data['password']) || !($user = $this->userModel->findBy(['cpf' => $data['cpf']])) || !password_verify($data['password'], $user->password) || $user->status !== 'ACTIVE';
+            $data['error'] = empty($data['email']) || empty($data['password']) || !($user = $this->userModel->findBy(['email' => $data['email']])) || !password_verify($data['password'], $user->password) || $user->status !== 'ACTIVE';
 
             if ($data['error']) {
-                if (!empty($data['cpf']) && !empty($data['password'])) Helper::log('LOGIN', 'FAILED', ['cpf' => $data['cpf'], 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'], 'auth.log');
+                if (!empty($data['email']) && !empty($data['password'])) Helper::log('LOGIN', 'FAILED', ['email' => $data['email'], 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'], 'auth.log');
 
                 $data['csrf_token'] = Auth::generateCsrf();
                 $this->view('login', $data);
             } else {
-                Helper::log('LOGIN', 'SUCCESS', ['user_id' => $user->id, 'cpf' => $data['cpf'], 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'], 'auth.log');
+                Helper::log('LOGIN', 'SUCCESS', ['user_id' => $user->id, 'email' => $data['email'], 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'], 'auth.log');
 
                 session_regenerate_id(true);
                 unset($_SESSION[APP_SESSION_KEY]['csrf_token']);

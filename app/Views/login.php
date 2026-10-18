@@ -9,8 +9,8 @@
             <form method="POST" action="<?= Helper::escape(APP_BASE_URL) . '/login' ?>">
                 <input type="hidden" name="csrf_token" value="<?= Helper::escape($csrf_token ?? '') ?>">
                 <div class="mb-2">
-                    <label for="cpf" class="form-label">CPF</label>
-                    <input id="cpf" name="cpf" type="text" class="form-control cpf <?= ($error ?? '') ? 'is-invalid' : '' ?>" value="<?= Helper::escape($cpf ?? '') ?>" inputmode="numeric" autocomplete="off" />
+                    <label for="email" class="form-label">E-mail</label>
+                    <input id="email" name="email" type="text" class="form-control email <?= ($error ?? '') ? 'is-invalid' : '' ?>" value="<?= Helper::escape($email ?? '') ?>" inputmode="numeric" autocomplete="off" />
                 </div>
                 <div class="mb-4">
                     <label for="password" class="form-label">Senha</label>

@@ -12,7 +12,7 @@
         <div class="row g-3">
             <?php Input::text($data, 'name', 'Nome', 'Ex: João da Silva', 'col-12 col-sm-8') ?>
 
-            <?php Input::numeric($data, 'cpf', 'CPF', 'Ex: 000.000.000-00', 'col-12 col-sm-4', classes: 'cpf') ?>
+            <?php Input::numeric($data, 'email', 'E-mail', 'Ex: email@gmail.com', 'col-12 col-sm-4') ?>
 
             <?php if ($canChangeBusiness): ?>
                 <?= Input::select(

@@ -25,7 +25,7 @@
             <thead>
                 <tr>
                     <th>Nome</th>
-                    <th class="d-none d-sm-table-cell">CPF</th>
+                    <th class="d-none d-sm-table-cell">E-mail</th>
                     <th class="d-none d-md-table-cell">Empresa</th>
                     <th class="d-none d-md-table-cell text-center" style="width: 110px">Permissão</th>
                 </tr>
@@ -52,7 +52,7 @@
                                 </div>
                             </td>
                             <td class="d-none d-sm-table-cell">
-                                <?= Helper::escape($user->cpf) ?>
+                                <?= Helper::escape($user->email) ?>
                             </td>
                             <td class="d-none d-md-table-cell">
                                 <?= Helper::escape($user->business_name) ?>
