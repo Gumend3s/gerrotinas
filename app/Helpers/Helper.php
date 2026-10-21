@@ -203,6 +203,7 @@ class Helper
         $maps = [
             'level' => ['EMPLOYEE' => 'green', 'ADMINISTRATOR' => 'yellow', 'MASTER' => 'red'],
             'yes/no' => ['1' => 'green', '0' => 'red'],
+            'priority' => ['LOW' => 'green', 'MEDIUM' => 'yellow', 'HIGH' => 'red'],
         ];
 
         $classPrefixes = (array) $classPrefixes;

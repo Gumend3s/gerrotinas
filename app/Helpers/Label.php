@@ -5,6 +5,9 @@ final class Label
     private const ENUM_LABELS = [
         'level' => ['EMPLOYEE' => 'Funcionário', 'ADMINISTRATOR' => 'Administrador', 'MASTER' => 'Dono'],
         'status' => ['ACTIVE' => 'Ativo', 'DELETED' => 'Deletado'],
+        'yes/no' => ['1' => 'Sim', '0' => 'Não'],
+        'priority' => ['LOW' => 'Baixa', 'MEDIUM' => 'Média', 'HIGH' => 'Alta'],
+        'recurrence_rule' => ['DAILY' => 'Dias', 'WEEKLY' => 'Semanas', 'MONTHLY' => 'Meses'],
     ];
 
     private const FIELD_LABELS = [
