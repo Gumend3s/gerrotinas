@@ -32,7 +32,7 @@ class Projects extends Controller
     {
         if (!($project = $this->projectModel->findBy(['id' => $id], activeOnly: true))) {
             Alert::flash('projects', 'Erro: projeto não encontrado', 'error');
-            Helper::redirect('projects');
+            Helper::redirect('projects' . (isset($_GET['routine_id']) ? "?routine_id={$_GET['routine_id']}" : ''));
         }
 
         return $project;
@@ -81,7 +81,7 @@ class Projects extends Controller
                 if ($success) Alert::flash('projects', $message);
                 else Alert::flash('projects', 'Erro: falha ao ' . ($data['isEditing'] ? 'editar' : 'cadastrar') . ' projeto', 'error');
 
-                Helper::redirect('projects');
+                Helper::redirect('projects' . (isset($_GET['routine_id']) ? "?routine_id={$_GET['routine_id']}" : ''));
             }
         }
 
@@ -100,7 +100,7 @@ class Projects extends Controller
         if ($this->projectModel->softDelete($id)) Alert::flash('projects', "Grupo de clientes deletado com sucesso");
         else Alert::flash('projects', 'Erro: falha ao deletar projeto', 'error');
 
-        Helper::redirect('projects');
+        Helper::redirect('projects' . (isset($_GET['routine_id']) ? "?routine_id={$_GET['routine_id']}" : ''));
     }
 
     /**
