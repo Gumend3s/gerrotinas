@@ -53,11 +53,11 @@
                             <td>
                                 <?= Helper::abbreviateName($routine->creator_name) ?>
                             </td>
-                            <td>
-                                <?php if (Auth::canBypass()): ?>
+                            <?php if (Auth::canBypass()): ?>
+                                <td>
                                     <?= Helper::abbreviateName($routine->business_name) ?>
-                                <?php endif; ?>
-                            </td>
+                                </td>
+                            <?php endif; ?>
                             <td class="fit-column">
                                 <span class="badge <?= Helper::getMappedCssClass('badge', 'yes/no', $routine->is_recurrent) ?>">
                                     <?= Label::enum('yes/no', $routine->is_recurrent) ?>
