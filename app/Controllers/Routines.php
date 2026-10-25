@@ -19,6 +19,16 @@ class Routines extends Controller
         foreach (self::MODELS as $property => $model) $this->$property = $this->model($model);
     }
 
+    /**
+     * Retrieves an active routine by its ID.
+     *
+     * If the routine is not found or is not active, displays an error message
+     * and redirects the user to the routine list.
+     *
+     * @param int|string $id ID of the routine to retrieve.
+     *
+     * @return object The active routine data object.
+     */
     private function getRoutine(int|string $id): object
     {
         if (!($routine = $this->routineModel->findBy(['id' => $id], activeOnly: true))) {
@@ -32,8 +42,9 @@ class Routines extends Controller
     /**
      * Displays the main routine list.
      *
-     * Retrieves all active routines and loads the routine management view.
-     * This page allows users to access individual routine details.
+     * Retrieves active routines according to the current user's access level.
+     * Users who can bypass business restrictions can view all active routines;
+     * other users can view only routines associated with their business.
      *
      * @return void
      */
@@ -43,13 +54,16 @@ class Routines extends Controller
     }
 
     /**
-     * Creates or updates a routine based on the provided ID.
+     * Creates a new routine or updates an existing one.
      *
-     * Handles form data loading, validation, routine creation,
-     * routine updates and automatic reactivation of deleted routines
-     * with the same CNPJ.
+     * Loads initial form values for GET requests. For POST requests, retrieves
+     * and validates submitted data, saves the routine if validation succeeds,
+     * displays a feedback message, and redirects after processing.
      *
-     * @param int|string|null $id Routine ID for update, or null for creation.
+     * If validation fails, redisplays the form with the submitted data and
+     * validation errors.
+     *
+     * @param int|string|null $id ID of the routine to update, or null to create a new routine.
      *
      * @return void
      */
@@ -79,10 +93,14 @@ class Routines extends Controller
         $this->view('routines/upsert', array_merge($data, $this->getViewData()));
     }
 
+
     /**
-     * Soft deletes a routine by ID.
+     * Soft-deletes an active routine by its ID.
      *
-     * @param int|string $id Routine ID.
+     * Verifies that the routine exists and is active before attempting deletion.
+     * Displays a success or error message and redirects accordingly.
+     *
+     * @param int|string $id ID of the routine to soft-delete.
      *
      * @return void
      */
@@ -102,18 +120,29 @@ class Routines extends Controller
     /**
      * Exports active routines to a CSV file.
      *
-     * Retrieves the routine data, converts status values to their display labels,
-     * and exports the records using the corresponding field labels.
+     * Retrieves routines according to the current user's access level,
+     * converts status, recurrence, and recurrence flag values into their
+     * display labels, and exports the records with localized column headers.
+     *
+     * If no routines are returned, displays an error message and redirects
+     * to the routine list.
      *
      * @return void
      */
     public function export(): void
     {
-        $routines = $this->routineModel->export();
-        if ($routines) {
-            foreach ($routines as $routine) if (isset($routine->status)) $routine->status = Label::enum('status', $routine->status);
+        $routines = Auth::canBypass()
+            ? $this->routineModel->export()
+            : $this->routineModel->exportByBusiness($_SESSION[APP_SESSION_KEY]['user_business_id']);
 
-            $header = array_map(fn($field) => Label::field('routine', $field), []);
+        if ($routines) {
+            foreach ($routines as $routine) if (isset($routine->status)) {
+                $routine->status = Label::enum('status', $routine->status);
+                $routine->is_recurrent = Label::enum('yes/no', $routine->is_recurrent);
+                $routine->recurrence_rule = Label::enum('recurrence_rule', $routine->recurrence_rule ?? '');
+            }
+
+            $header = array_map(fn($field) => Label::field('routine', $field), Auth::canBypass() ? ['id', 'name', 'is_recurrent', 'recurrence_rule', 'recurrence_value', 'priority', 'project_name', 'creator_name', 'business_name', 'created_at', 'updated_at', 'status',] : ['id', 'name', 'is_recurrent', 'recurrence_rule', 'recurrence_value', 'priority', 'project_name', 'creator_name', 'created_at', 'updated_at', 'status',]);
             $fileName = "Rotinas";
 
             Helper::exportCsv($routines, $header, $fileName);
@@ -124,12 +153,14 @@ class Routines extends Controller
     }
 
     /**
-     * Returns the data required to initialize the view.
+     * Retrieves the data required to populate the routine form view.
      *
-     * Includes values that are not directly related to the form fields,
-     * such as available states.
+     * Provides the available projects, priority options, and recurrence rule
+     * options, using display labels for the latter two. Project options are
+     * restricted to the current user's business unless access restrictions
+     * can be bypassed.
      *
-     * @return array View initialization data.
+     * @return array Associative array containing the view data.
      */
     private function getViewData(): array
     {
@@ -144,14 +175,14 @@ class Routines extends Controller
     }
 
     /**
-     * Returns the initial form values.
+     * Retrieves the initial values for the routine form.
      *
-     * Populates the form with existing routine data when editing,
-     * or returns empty values when creating a new routine.
+     * When editing, populates the form with the existing active routine's data.
+     * When creating a new routine, returns empty values for the form fields.
      *
-     * @param int|string|null $id Routine ID when editing, or null for creation.
+     * @param int|string|null $id ID of the routine to retrieve, or null for creation.
      *
-     * @return array Form field values.
+     * @return array Associative array containing the initial form field values.
      */
     private function getInitialData(int|string|null $id): array
     {
@@ -168,12 +199,13 @@ class Routines extends Controller
     }
 
     /**
-     * Processes raw form input into routine data.
+     * Retrieves and normalizes routine form input.
      *
-     * Applies input sanitization and formatting before validation
-     * and persistence.
+     * Reads the submitted POST data, standardizes the routine name, trims
+     * the remaining form values, and initializes the flag used to indicate
+     * whether a deleted routine should be reactivated.
      *
-     * @return array Processed routine data.
+     * @return array Associative array containing the processed form data.
      */
     private function getFormData(): array
     {
@@ -191,14 +223,15 @@ class Routines extends Controller
     }
 
     /**
-     * Validates routine form data.
+     * Validates the submitted routine form data.
      *
-     * Adds validation errors, checks duplicated routine information,
-     * handles deleted routine reactivation and resolves the location ID.
+     * Checks the routine name, project, priority, recurrence flag, and
+     * recurrence settings when recurrence is enabled. Adds corresponding
+     * validation error messages to the data array.
      *
-     * @param array  $data Routine form data.
+     * @param array $data Routine form data to validate.
      *
-     * @return array Routine data with validation results.
+     * @return array Routine form data with validation error fields.
      */
     private function validateFormData(array $data): array
     {
@@ -210,20 +243,30 @@ class Routines extends Controller
         $data['recurrence_rule_error'] = $data['is_recurrent'] && empty($data['recurrence_rule']) ? 'Escolha o tipo de Recorrência' : null;
         $data['recurrence_value_error'] = $data['is_recurrent'] && empty($data['recurrence_value']) ? 'Escolha o Período de Recorrência' : null;
 
+        if ($data['project_id_error'] === null && $data['name_error'] === null && ($existingRoutine = $this->routineModel->findBy(['project_id' => $data['project_id'], 'name' => $data['name']])) && $existingRoutine->id != $data['id']) {
+            if ($existingRoutine->status === 'DELETED' && !$data['isEditing']) {
+                $data['shouldReactivate'] = true;
+                $data['existingRoutine'] = $existingRoutine;
+            } else $data['name_error'] = 'Uma rotina desse projeto já possui esse nome';
+        }
+
         return $data;
     }
 
     /**
-     * Creates or updates a routine based on the provided data.
+     * Creates or updates a routine using the provided form data.
      *
-     * Handles routine creation, updates and automatic reactivation
-     * of previously deleted routines with the same CNPJ.
+     * Clears recurrence settings when recurrence is disabled. For existing
+     * routines, updates the specified routine after verifying that it is active.
+     * For new routines, either reactivates a previously deleted routine or
+     * creates a new one, depending on the supplied data.
      *
-     * @param array  $data Validated routine data.
+     * Returns a success flag and a corresponding feedback message.
      *
-     * @return array Contains the routine save status and message.
-     *               The first element indicates success and the second
-     *               contains the corresponding feedback message.
+     * @param array $data Validated routine data and operation metadata.
+     *
+     * @return array A two-element array containing the operation result and
+     *               feedback message, in the format [bool, string].
      */
     private function save(array $data): array
     {
