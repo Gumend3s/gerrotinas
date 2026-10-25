@@ -23,11 +23,19 @@
 
             <?php Input::select($data, 'priority', 'Prioridade', $priorities, 'col-12 col-sm-3') ?>
 
-            <?php Input::select($data, 'is_recurrent', 'Recorrente', [true => 'Sim', false => 'Não'], 'col-12 col-sm-4', required: false) ?>
+            <?php Input::select($data, 'is_recurrent', 'Recorrente', [true => 'Sim', false => 'Não'], 'col-12 col-sm-4', required: false, classes: 'is-recurrent') ?>
 
-            <?php Input::select($data, 'recurrence_rule', 'Recorrência', $recurrence_rules, 'col-12 col-sm-4', required: false) ?>
+            <?php
+            $isRecurrent = $data['is_recurrent'];
 
-            <?php Input::text($data, 'recurrence_value', 'Período', 'Ex: 2', 'col-12 col-sm-4', required: false, classes: 'number-2') ?>
+            Display::text($data, '', 'Recorrência', 'col-12 col-sm-4 recurrence-display' . ($isRecurrent ? ' d-none' : ''));
+
+            Display::text($data, '', 'Período', 'col-12 col-sm-4 recurrence-display' . ($isRecurrent ? ' d-none' : ''));
+            
+            Input::select($data, 'recurrence_rule', 'Recorrência', $recurrence_rules, 'col-12 col-sm-4 recurrence-input' . ($isRecurrent ? '' : ' d-none'), required: false);
+
+            Input::text($data, 'recurrence_value', 'Período', 'Ex: 2', 'col-12 col-sm-4 recurrence-input' . ($isRecurrent ? '' : ' d-none'), required: false, classes: 'number-2');
+            ?>
         </div>
 
         <div class="row justify-content-between g-1">

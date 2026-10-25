@@ -164,5 +164,15 @@ jQuery(document).ready(function () {
             .addClass('d-none');
     });
 
+    $('.is-recurrent').on('change', function (e) {
+        const isRecurrent = $(this).val() == 1;
+
+        console.log(isRecurrent);
+        console.log(!isRecurrent);
+
+        $('.recurrence-input').toggleClass('d-none', !isRecurrent);
+        $('.recurrence-display').toggleClass('d-none', isRecurrent);
+    });
+
     const capitalize = str => str ? str[0].toUpperCase() + str.slice(1).toLowerCase() : str;
 });

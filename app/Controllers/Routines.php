@@ -205,6 +205,10 @@ class Routines extends Controller
         $data['name_error'] = empty($data['name']) ? 'Preencha o campo Nome' : (!Validate::name($data['name']) ? 'Nome possui caracteres inválidos' : null);
         $data['project_id_error'] = empty($data['project_id']) ? 'Escolha um Projeto' : null;
         $data['priority_error'] = empty($data['priority']) ? 'Escolha uma Prioridade' : null;
+        $data['is_recurrent_error'] = $data['is_recurrent'] === '' ? 'Escolha Recorrente' : null;
+
+        $data['recurrence_rule_error'] = $data['is_recurrent'] && empty($data['recurrence_rule']) ? 'Escolha o tipo de Recorrência' : null;
+        $data['recurrence_value_error'] = $data['is_recurrent'] && empty($data['recurrence_value']) ? 'Escolha o Período de Recorrência' : null;
 
         return $data;
     }
@@ -223,6 +227,11 @@ class Routines extends Controller
      */
     private function save(array $data): array
     {
+        if (!$data['is_recurrent']) {
+            $data['recurrence_rule'] = null;
+            $data['recurrence_value'] = null;
+        }
+
         if ($data['isEditing']) {
             $this->getRoutine($data['id']);
 
