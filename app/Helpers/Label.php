@@ -5,11 +5,15 @@ final class Label
     private const ENUM_LABELS = [
         'level' => ['EMPLOYEE' => 'Funcionário', 'ADMINISTRATOR' => 'Administrador', 'MASTER' => 'Dono'],
         'status' => ['ACTIVE' => 'Ativo', 'DELETED' => 'Deletado'],
+        'yes/no' => ['1' => 'Sim', '0' => 'Não'],
+        'priority' => ['LOW' => 'Baixa', 'MEDIUM' => 'Média', 'HIGH' => 'Alta'],
+        'recurrence_rule' => ['DAILY' => 'Dias', 'WEEKLY' => 'Semanas', 'MONTHLY' => 'Meses'],
     ];
 
     private const FIELD_LABELS = [
         'user' => ['id' => 'ID', 'name' => 'Nome', 'email' => 'E-mail', 'business_name' => 'Empresa', 'level' => 'Nível', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
         'business' => ['id' => 'ID', 'trade_name' => 'Nome Fantasia', 'legal_name' => 'Razão Social', 'cnpj' => 'CNPJ', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
+        'routine' => ['id' => 'ID', 'name' => 'Nome', 'is_recurrent' => 'Recorrente', 'recurrence_rule' => 'Recorrencia', 'recurrence_value' => 'Período', 'priority' => 'Prioridade', 'project_name' => 'Projeto', 'creator_name' => 'Criador', 'business_name' => 'Empresa', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em',],
     ];
 
     /**

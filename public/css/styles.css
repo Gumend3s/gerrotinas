@@ -476,6 +476,11 @@ footer {
     object-fit: contain;
 }
 
+.fit-column {
+    width: 1%;
+    white-space: nowrap;
+}
+
 @media (max-width: 577px) {
     .image-container {
         width: 100%;
