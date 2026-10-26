@@ -6,6 +6,9 @@ class Users extends Controller
         'userModel' => 'UserModel',
         'businessModel' => 'BusinessModel',
     ];
+    
+    private UserModel $userModel;
+    private BusinessModel $businessModel;
 
     private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
 

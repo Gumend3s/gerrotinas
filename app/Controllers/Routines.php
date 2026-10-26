@@ -7,6 +7,9 @@ class Routines extends Controller
         'projectModel' => 'ProjectModel',
     ];
 
+    private RoutineModel $routineModel;
+    private ProjectModel $projectModel;
+
     private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
 
     public function __construct()

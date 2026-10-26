@@ -6,6 +6,8 @@ class Page extends Controller
         'userModel' => 'UserModel'
     ];
 
+    private UserModel $userModel;
+
     public function __construct()
     {
         foreach ($this->models as $model => $modelName) $this->$model = $this->model($modelName);

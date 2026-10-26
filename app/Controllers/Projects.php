@@ -5,6 +5,8 @@ class Projects extends Controller
     private const MODELS = [
         'projectModel' => 'ProjectModel',
     ];
+    
+    private ProjectModel $projectModel;
 
     private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
 

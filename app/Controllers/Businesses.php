@@ -5,6 +5,8 @@ class Businesses extends Controller
     private const MODELS = [
         'businessModel' => 'BusinessModel',
     ];
+    
+    private BusinessModel $businessModel;
 
     private const REQUIRED_ACCESS = ['MASTER'];
 
