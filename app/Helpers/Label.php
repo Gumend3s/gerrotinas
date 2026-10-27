@@ -14,6 +14,7 @@ final class Label
         'user' => ['id' => 'ID', 'name' => 'Nome', 'email' => 'E-mail', 'business_name' => 'Empresa', 'level' => 'Nível', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
         'business' => ['id' => 'ID', 'trade_name' => 'Nome Fantasia', 'legal_name' => 'Razão Social', 'cnpj' => 'CNPJ', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em'],
         'routine' => ['id' => 'ID', 'name' => 'Nome', 'is_recurrent' => 'Recorrente', 'recurrence_rule' => 'Recorrencia', 'recurrence_value' => 'Período', 'priority' => 'Prioridade', 'project_name' => 'Projeto', 'creator_name' => 'Criador', 'business_name' => 'Empresa', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em',],
+        'action' => ['id' => 'ID', 'name' => 'Nome', 'priority' => 'Prioridade', 'creator_name' => 'Criador', 'routine_name' => 'Rotina', 'status' => 'Status', 'created_at' => 'Criado em', 'updated_at' => 'Atualizado em',],
     ];
 
     /**

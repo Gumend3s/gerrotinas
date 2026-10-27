@@ -75,12 +75,16 @@ class RoutineModel
                 R.id, 
                 R.name, 
                 R.project_id, 
+                P.name as project_name, 
                 R.priority, 
                 R.is_recurrent,
                 R.recurrence_rule,
                 R.recurrence_value,
+                P.business_id,
                 R.status
             FROM routines R 
+            INNER JOIN projects P ON
+                P.id = R.project_id
             WHERE
                 $conditions" . ($activeOnly ? ' AND R.status = :status' : '')
         );

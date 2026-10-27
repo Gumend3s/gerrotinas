@@ -56,7 +56,7 @@
             <div class="<?= $isEditing ? 'col-8' : 'col-12' ?> col-sm-auto ms-sm-auto">
                 <div class="row g-1">
                     <div class="col col-sm-auto">
-                        <a href="<?= APP_BASE_URL ?>/routines/index" class="btn btn-secondary btn-responsive">Voltar</a>
+                        <a href="<?= APP_BASE_URL . ($isEditing ? "/actions/index/$id" : "/routines") ?>" class="btn btn-secondary btn-responsive">Voltar</a>
                     </div>
 
                     <div class="col col-sm-auto">

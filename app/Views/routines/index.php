@@ -43,7 +43,7 @@
                     </tr>
                 <?php else: ?>
                     <?php foreach ($routines as $routine): ?>
-                        <tr data-href="<?= APP_BASE_URL ?>/routines/upsert/<?= $routine->id ?>" class="cursor-pointer">
+                        <tr data-href="<?= APP_BASE_URL ?>/actions/index/<?= $routine->id ?>" class="cursor-pointer">
                             <td>
                                 <?= Helper::escape($routine->project_name) ?>
                             </td>
