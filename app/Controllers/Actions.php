@@ -10,7 +10,7 @@ class Actions extends Controller
     private ActionModel $actionModel;
     private RoutineModel $routineModel;
 
-    private const REQUIRED_ACCESS = ['FINANCE' => 'ADMINISTRATOR', 'SALES' => 'ADMINISTRATOR'];
+    private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
 
     public function __construct()
     {
