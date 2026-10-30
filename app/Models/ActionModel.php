@@ -44,13 +44,13 @@ class ActionModel
         $conditions = implode(' AND ', array_map(fn($field) => "A.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                A.id, 
-                A.name, 
-                A.routine_id, 
-                A.priority, 
-                A.status 
-            FROM actions A 
+            "SELECT
+                A.id,
+                A.name,
+                A.routine_id,
+                A.priority,
+                A.status
+            FROM actions A
             WHERE
                 $conditions" . ($activeOnly ? ' AND A.status = :status' : '')
         );
@@ -70,18 +70,18 @@ class ActionModel
     public function getRoutineActiveActions(int|string $routineId): array|false
     {
         $this->db->query(
-            "SELECT 
-                A.id, 
+            "SELECT
+                A.id,
                 A.name,
                 U.name as creator_name, 
                 A.priority
-            FROM actions A 
-            INNER JOIN users U ON 
-                U.id = A.creator_id 
-            WHERE 
-                A.status = 'ACTIVE' AND 
-                A.routine_id = :routine_id 
-            ORDER BY 
+            FROM actions A
+            INNER JOIN users U ON
+                U.id = A.creator_id
+            WHERE
+                A.status = 'ACTIVE' AND
+                A.routine_id = :routine_id
+            ORDER BY
                 A.name ASC"
         );
 
@@ -112,9 +112,10 @@ class ActionModel
 
         $this->db->query(
             "UPDATE actions
-            SET 
+            SET
                 $queryFields
-            WHERE id = :id"
+            WHERE
+                id = :id"
         );
 
         $this->db->bindAll($fields);
@@ -142,7 +143,7 @@ class ActionModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO actions(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO actions(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -173,7 +174,7 @@ class ActionModel
             "UPDATE actions
             SET
                 A.status = :status
-            WHERE 
+            WHERE
                 A.id = :id"
         );
 
@@ -192,21 +193,21 @@ class ActionModel
     public function exportRoutineActions(int|string $routine_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                A.id, 
-                A.name, 
-                U.name as creator_name, 
-                A.priority, 
-                A.status, 
-                A.created_at, 
-                A.updated_at 
+            "SELECT
+                A.id,
+                A.name,
+                U.name AS creator_name,
+                A.priority,
+                A.status,
+                A.created_at,
+                A.updated_at
             FROM actions A
-            INNER JOIN users U ON 
-                U.id = A.creator_id 
-            WHERE 
-                A.status = 'ACTIVE' AND 
+            INNER JOIN users U ON
+                U.id = A.creator_id
+            WHERE
+                A.status = 'ACTIVE' AND
                 A.routine_id = :routine_id
-            ORDER BY 
+            ORDER BY
                 A.name ASC"
         );
 

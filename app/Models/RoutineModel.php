@@ -71,18 +71,18 @@ class RoutineModel
         $conditions = implode(' AND ', array_map(fn($field) => "R.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                R.id, 
-                R.name, 
-                R.project_id, 
-                P.name as project_name, 
-                R.priority, 
+            "SELECT
+                R.id,
+                R.name,
+                R.project_id,
+                P.name AS project_name,
+                R.priority,
                 R.is_recurrent,
                 R.recurrence_rule,
                 R.recurrence_value,
                 P.business_id,
                 R.status
-            FROM routines R 
+            FROM routines R
             INNER JOIN projects P ON
                 P.id = R.project_id
             WHERE
@@ -104,24 +104,24 @@ class RoutineModel
     public function getActive(): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name, 
-                B.legal_name as business_name 
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name,
+                B.legal_name AS business_name
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' 
-            ORDER BY 
+            WHERE
+                R.status = 'ACTIVE'
+            ORDER BY
                 R.name ASC"
         );
 
@@ -140,24 +140,24 @@ class RoutineModel
     public function getActiveByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' AND 
+            WHERE
+                R.status = 'ACTIVE' AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 R.name ASC"
         );
 
@@ -188,9 +188,9 @@ class RoutineModel
 
         $this->db->query(
             "UPDATE routines
-            SET 
+            SET
                 $queryFields
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -220,7 +220,7 @@ class RoutineModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO routines(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO routines(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -244,7 +244,7 @@ class RoutineModel
             "UPDATE ROUTINES
             SET 
                 status = :status
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -265,8 +265,8 @@ class RoutineModel
     public function export(): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
                 R.recurrence_rule,
@@ -278,16 +278,16 @@ class RoutineModel
                 R.status,
                 R.created_at,
                 R.updated_at
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' 
-            ORDER BY 
+            WHERE
+                R.status = 'ACTIVE'
+            ORDER BY
                 R.name ASC"
         );
 
@@ -307,8 +307,8 @@ class RoutineModel
     public function exportByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
                 R.recurrence_rule,
@@ -319,17 +319,17 @@ class RoutineModel
                 R.status,
                 R.created_at,
                 R.updated_at
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' AND 
+            WHERE
+                R.status = 'ACTIVE' AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 R.name ASC"
         );
 

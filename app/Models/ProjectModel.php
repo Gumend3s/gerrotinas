@@ -44,11 +44,11 @@ class ProjectModel
         $conditions = implode(' AND ', array_map(fn($field) => "P.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                P.id, 
+            "SELECT
+                P.id,
                 P.name,
                 P.status
-            FROM projects P 
+            FROM projects P
             WHERE
                 $conditions" . ($activeOnly ? ' AND P.status = :status' : '')
         );
@@ -67,19 +67,19 @@ class ProjectModel
     public function getActive(): array|false
     {
         $this->db->query(
-            "SELECT 
-                P.id, 
-                P.name, 
-                U.name as creator_name, 
-                B.legal_name as business_name 
-            FROM projects P 
+            "SELECT
+                P.id,
+                P.name,
+                U.name AS creator_name,
+                B.legal_name AS business_name
+            FROM projects P
             INNER JOIN users U ON
                 U.id = P.creator_id
             INNER JOIN businesses B ON
                 B.id = P.business_id
-            WHERE 
+            WHERE
                 P.status = 'ACTIVE'
-            ORDER BY 
+            ORDER BY
                 P.name"
         );
 
@@ -94,19 +94,19 @@ class ProjectModel
     public function getActiveByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                P.id, 
-                P.name, 
-                U.name as creator_name 
-            FROM projects P 
+            "SELECT
+                P.id,
+                P.name,
+                U.name AS creator_name
+            FROM projects P
             INNER JOIN users U ON
                 U.id = P.creator_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
+            WHERE
                 P.status = 'ACTIVE' AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 P.name"
         );
 
@@ -137,9 +137,9 @@ class ProjectModel
 
         $this->db->query(
             "UPDATE projects
-            SET 
+            SET
                 $queryFields
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -170,7 +170,7 @@ class ProjectModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO projects(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO projects(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -195,12 +195,12 @@ class ProjectModel
     {
         $this->db->query(
             "UPDATE projects P
-            LEFT JOIN routines R ON 
+            LEFT JOIN routines R ON
                 P.id = R.project_id
             SET
                 P.status = :status,
                 R.project_id = NULL
-            WHERE 
+            WHERE
                 P.id = :id"
         );
 

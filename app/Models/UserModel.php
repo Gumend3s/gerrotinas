@@ -56,16 +56,16 @@ class UserModel
         $conditions = implode(' AND ', array_map(fn($field) => "U.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                U.id, 
-                U.name, 
-                U.email, 
-                U.business_id, 
-                B.trade_name as business_name, 
-                U.level, 
-                U.status, 
-                U.password 
-            FROM users U 
+            "SELECT
+                U.id,
+                U.name,
+                U.email,
+                U.business_id,
+                B.trade_name AS business_name,
+                U.level,
+                U.status,
+                U.password
+            FROM users U
             INNER JOIN businesses B ON
                 B.id = U.business_id
             WHERE
@@ -86,18 +86,18 @@ class UserModel
     public function getActive(): array|false
     {
         $this->db->query(
-            "SELECT 
-                U.id, 
-                U.name, 
-                U.email, 
-                B.trade_name as business_name, 
-                U.level 
-            FROM users U 
+            "SELECT
+                U.id,
+                U.name,
+                U.email,
+                B.trade_name AS business_name,
+                U.level
+            FROM users U
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                U.status = 'ACTIVE' 
-            ORDER BY 
+            WHERE
+                U.status = 'ACTIVE'
+            ORDER BY
                 FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR', 'MASTER') DESC"
         );
 
@@ -117,20 +117,20 @@ class UserModel
     public function getActiveByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                U.id, 
-                U.name, 
-                U.email, 
-                B.trade_name as business_name, 
-                U.level 
-            FROM users U 
+            "SELECT
+                U.id,
+                U.name,
+                U.email,
+                B.trade_name AS business_name,
+                U.level
+            FROM users U
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
+            WHERE
                 U.status = 'ACTIVE' AND
                 U.level IN ('EMPLOYEE', 'ADMINISTRATOR') AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR') DESC"
         );
 
@@ -161,9 +161,9 @@ class UserModel
 
         $this->db->query(
             "UPDATE users
-            SET 
+            SET
                 $queryFields
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -191,7 +191,7 @@ class UserModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO users(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO users(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -213,9 +213,9 @@ class UserModel
     {
         $this->db->query(
             "UPDATE users
-            SET 
+            SET
                 status = :status
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -235,21 +235,21 @@ class UserModel
     public function export(): array|false
     {
         $this->db->query(
-            "SELECT 
-                U.id, 
-                U.name, 
-                U.email, 
-                B.trade_name as business_name, 
-                U.level, 
-                U.created_at, 
-                U.updated_at, 
-                U.status 
-            FROM users U 
+            "SELECT
+                U.id,
+                U.name,
+                U.email,
+                B.trade_name AS business_name,
+                U.level,
+                U.created_at,
+                U.updated_at,
+                U.status
+            FROM users U
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                U.status = 'ACTIVE' 
-            ORDER BY 
+            WHERE
+                U.status = 'ACTIVE'
+            ORDER BY
                 FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR', 'MASTER') DESC"
         );
 
@@ -269,23 +269,23 @@ class UserModel
     public function exportByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                U.id, 
-                U.name, 
-                U.email, 
-                B.trade_name as business_name, 
-                U.level, 
-                U.created_at, 
-                U.updated_at, 
-                U.status 
-            FROM users U 
+            "SELECT
+                U.id,
+                U.name,
+                U.email,
+                B.trade_name AS business_name,
+                U.level,
+                U.created_at,
+                U.updated_at,
+                U.status
+            FROM users U
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
+            WHERE
                 U.status = 'ACTIVE' AND
                 U.level IN ('EMPLOYEE', 'ADMINISTRATOR') AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 FIELD(U.level, 'EMPLOYEE', 'ADMINISTRATOR') DESC"
         );
 

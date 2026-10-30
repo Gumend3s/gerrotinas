@@ -44,13 +44,13 @@ class BusinessModel
         $conditions = implode(' AND ', array_map(fn($field) => "B.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                B.id, 
-                B.legal_name, 
-                B.trade_name, 
-                B.cnpj, 
+            "SELECT
+                B.id,
+                B.legal_name,
+                B.trade_name,
+                B.cnpj,
                 B.status
-            FROM businesses B 
+            FROM businesses B
             WHERE
                 $conditions" . ($activeOnly ? ' AND B.status = :status' : '')
         );
@@ -69,15 +69,15 @@ class BusinessModel
     public function getActive(): array|false
     {
         $this->db->query(
-            "SELECT 
-                B.id, 
+            "SELECT
+                B.id,
                 B.legal_name,
                 B.trade_name,
                 B.cnpj
-            FROM businesses B 
-            WHERE 
-                B.status = 'ACTIVE' 
-            ORDER BY 
+            FROM businesses B
+            WHERE
+                B.status = 'ACTIVE'
+            ORDER BY
                 B.trade_name ASC"
         );
 
@@ -106,9 +106,9 @@ class BusinessModel
 
         $this->db->query(
             "UPDATE businesses
-            SET 
+            SET
                 $queryFields
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -136,7 +136,7 @@ class BusinessModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO businesses(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO businesses(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -158,9 +158,9 @@ class BusinessModel
     {
         $this->db->query(
             "UPDATE businesses
-            SET 
+            SET
                 status = :status
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -180,17 +180,17 @@ class BusinessModel
     public function export(): array|false
     {
         $this->db->query(
-            "SELECT 
-                B.id, 
-                B.trade_name, 
-                B.cnpj, 
-                B.created_at, 
-                B.updated_at, 
-                B.status 
-            FROM businesses B 
-            WHERE 
-                B.status = 'ACTIVE' 
-            ORDER BY 
+            "SELECT
+                B.id,
+                B.trade_name,
+                B.cnpj,
+                B.created_at,
+                B.updated_at,
+                B.status
+            FROM businesses B
+            WHERE
+                B.status = 'ACTIVE'
+            ORDER BY
                 B.trade_name ASC"
         );
         
