@@ -34,7 +34,7 @@ class Actions extends Controller
      */
     private function getRoutine(int|string $routine_id): object
     {
-        if (!($routine = $this->routineModel->findBy(['id' => $routine_id], activeOnly: true))) {
+        if (!($routine = $this->routineModel->findBy(['id' => $routine_id, 'status' => 'ACTIVE']))) {
             Alert::flash('routines', 'Erro: rotina não encontrada', 'error');
             Helper::redirect('routines');
         }
@@ -77,7 +77,7 @@ class Actions extends Controller
      */
     private function getAction(int|string $routine_id, int|string $id): object
     {
-        if (!($action = $this->actionModel->findBy(['routine_id' => $routine_id, 'id' => $id], activeOnly: true))) {
+        if (!($action = $this->actionModel->findBy(['routine_id' => $routine_id, 'id' => $id, 'status' => 'ACTIVE']))) {
             Alert::flash('actions', 'Erro: ação não encontrada', 'error');
             Helper::redirect("actions/index/$routine_id");
         }

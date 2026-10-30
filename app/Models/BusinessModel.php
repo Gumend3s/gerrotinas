@@ -26,15 +26,14 @@ class BusinessModel
     /**
      * Returns a user matching the specified searchable fields.
      *
-     * Filters the search values to the supported searchable fields and optionally
-     * restricts the search to active users.
+     * Filters the search values to the supported searchable fields. Include a
+     * status value in $searchValues to restrict the result by status.
      *
      * @param array $searchValues Searchable field values.
-     * @param bool  $activeOnly   Whether to restrict the search to active users.
      *
      * @return object|false User data object if found, otherwise false.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -52,11 +51,10 @@ class BusinessModel
                 B.status
             FROM businesses B
             WHERE
-                $conditions" . ($activeOnly ? ' AND B.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
     }

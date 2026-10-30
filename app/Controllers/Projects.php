@@ -32,7 +32,7 @@ class Projects extends Controller
      */
     private function getProject(int|string $id): object
     {
-        if (!($project = $this->projectModel->findBy(['id' => $id], activeOnly: true))) {
+        if (!($project = $this->projectModel->findBy(['id' => $id, 'status' => 'ACTIVE']))) {
             Alert::flash('projects', 'Erro: projeto não encontrado', 'error');
             Helper::redirect('projects' . (isset($_GET['routine_id']) ? "?routine_id={$_GET['routine_id']}" : ''));
         }

@@ -27,7 +27,7 @@ class RoutineModel
         'recurrence_rule',
         'recurrence_value',
     ];
-    private const SEARCHABLE_FIELDS = ['id', 'name', 'project_id'];
+    private const SEARCHABLE_FIELDS = ['id', 'name', 'project_id', 'status'];
 
     /**
      * Retrieves the available priority values defined in the database schema.
@@ -56,12 +56,11 @@ class RoutineModel
      * are provided, the method returns false. Optionally, the search can be
      * restricted to routines with ACTIVE status.
      *
-     * @param array $searchValues Associative array of search field names and values.
-     * @param bool  $activeOnly   Whether to restrict the search to active routines.
+     * @param array $searchValues Values for supported routine fields.
      *
      * @return object|false The routine data object if found, or false otherwise.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -86,11 +85,10 @@ class RoutineModel
             INNER JOIN projects P ON
                 P.id = R.project_id
             WHERE
-                $conditions" . ($activeOnly ? ' AND R.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
     }

@@ -11,7 +11,7 @@ class ActionModel
 
     private const CREATABLE_FIELDS = ['name', 'priority', 'creator_id', 'routine_id'];
     private const UPDATABLE_FIELDS = ['name', 'priority', 'status'];
-    private const SEARCHABLE_FIELDS = ['id', 'name', 'routine_id'];
+    private const SEARCHABLE_FIELDS = ['id', 'name', 'routine_id', 'status'];
 
     /**
      * Retrieves the available priority values defined in the database schema.
@@ -29,12 +29,11 @@ class ActionModel
      * Filters the search values to the supported searchable fields and optionally
      * restricts the search to active actions.
      *
-     * @param array $searchValues Searchable field values.
-     * @param bool  $activeOnly   Whether to restrict the search to active actions.
+     * @param array $searchValues Values for supported action fields.
      *
      * @return object|false Action data object if found, otherwise false.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -52,12 +51,10 @@ class ActionModel
                 A.status
             FROM actions A
             WHERE
-                $conditions" . ($activeOnly ? ' AND A.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
     }

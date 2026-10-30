@@ -38,15 +38,14 @@ class UserModel
     /**
      * Returns a user matching the specified searchable fields.
      *
-     * Filters the search values to the supported searchable fields and optionally
-     * restricts the search to active users.
+     * Filters the search values to the supported searchable fields. Include a
+     * status value in $searchValues to restrict the result by status.
      *
-     * @param array $searchValues Searchable field values.
-     * @param bool  $activeOnly   Whether to restrict the search to active users.
+     * @param array $searchValues Values for supported user fields.
      *
      * @return object|false User data object if found, otherwise false.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -69,12 +68,10 @@ class UserModel
             INNER JOIN businesses B ON
                 B.id = U.business_id
             WHERE
-                $conditions" . ($activeOnly ? ' AND U.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
-
         return $this->db->fetchSingleRow();
     }
 

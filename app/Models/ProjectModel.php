@@ -20,21 +20,21 @@ class ProjectModel
     ];
     private const SEARCHABLE_FIELDS = [
         'id',
-        'name'
+        'name',
+        'status'
     ];
 
     /**
      * Returns a project matching the specified searchable fields.
      *
-     * Filters the search values to the supported searchable fields and optionally
-     * restricts the search to active projects.
+     * Filters the search values to the supported searchable fields. Include a
+     * status value in $searchValues to restrict the result by status.
      *
-     * @param array $searchValues Searchable field values.
-     * @param bool  $activeOnly   Whether to restrict the search to active projects.
+     * @param array $searchValues Values for supported project fields.
      *
      * @return object|false Project data object if found, otherwise false.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -50,11 +50,10 @@ class ProjectModel
                 P.status
             FROM projects P
             WHERE
-                $conditions" . ($activeOnly ? ' AND P.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
     }
