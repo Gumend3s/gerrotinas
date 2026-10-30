@@ -34,7 +34,7 @@ class Routines extends Controller
      */
     private function getRoutine(int|string $id): object
     {
-        if (!($routine = $this->routineModel->findBy(['id' => $id], activeOnly: true))) {
+        if (!($routine = $this->routineModel->findBy(['id' => $id, 'status' => 'ACTIVE']))) {
             Alert::flash('routines', 'Erro: rotina não encontrada', 'error');
             Helper::redirect('routines');
         }

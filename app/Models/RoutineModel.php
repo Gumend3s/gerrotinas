@@ -27,10 +27,10 @@ class RoutineModel
         'recurrence_rule',
         'recurrence_value',
     ];
-    private const SEARCHABLE_FIELDS = ['id', 'name', 'project_id'];
+    private const SEARCHABLE_FIELDS = ['id', 'name', 'project_id', 'status'];
 
     /**
-     * Retrieves the available priority values defined in the database schema.
+     * Retrieves the routine priority values defined in the database schema.
      *
      * @return string Comma-separated list of valid priority values.
      */
@@ -40,7 +40,7 @@ class RoutineModel
     }
 
     /**
-     * Retrieves the available recurrence rule values defined in the database schema.
+     * Retrieves recurrence rule values defined in the database schema.
      *
      * @return string Comma-separated list of valid recurrence rule values.
      */
@@ -54,14 +54,13 @@ class RoutineModel
      *
      * Only supported searchable fields are considered. If no valid search fields
      * are provided, the method returns false. Optionally, the search can be
-     * restricted to routines with ACTIVE status.
+     * restricted by including a status value in $searchValues.
      *
-     * @param array $searchValues Associative array of search field names and values.
-     * @param bool  $activeOnly   Whether to restrict the search to active routines.
+     * @param array $searchValues Values for supported routine fields.
      *
      * @return object|false The routine data object if found, or false otherwise.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -71,57 +70,57 @@ class RoutineModel
         $conditions = implode(' AND ', array_map(fn($field) => "R.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                R.id, 
-                R.name, 
-                R.project_id, 
-                P.name as project_name, 
-                R.priority, 
+            "SELECT
+                R.id,
+                R.name,
+                R.project_id,
+                P.name AS project_name,
+                R.priority,
                 R.is_recurrent,
                 R.recurrence_rule,
                 R.recurrence_value,
                 P.business_id,
                 R.status
-            FROM routines R 
+            FROM routines R
             INNER JOIN projects P ON
                 P.id = R.project_id
             WHERE
-                $conditions" . ($activeOnly ? ' AND R.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
     }
 
     /**
-     * Retrieves all active routines, including their project, creator, and business
-     * names, ordered alphabetically by routine name.
+     * Retrieves active routines with their project, creator, and business names.
+     *
+     * Results are ordered by routine name.
      *
      * @return array|false List of active routines, or false on failure.
      */
     public function getActive(): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name, 
-                B.legal_name as business_name 
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name,
+                B.legal_name AS business_name
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' 
-            ORDER BY 
+            WHERE
+                R.status = 'ACTIVE'
+            ORDER BY
                 R.name ASC"
         );
 
@@ -129,35 +128,35 @@ class RoutineModel
     }
 
     /**
-     * Retrieves all active routines associated with the specified business,
-     * including their project and creator names, ordered alphabetically by
-     * routine name.
+     * Retrieves active routines associated with the specified business.
      *
-     * @param  int|string  $business_id Business ID used to filter the routines.
+     * Results include project and creator names and are ordered by routine name.
+     *
+     * @param int|string $business_id Business ID used to filter the routines.
      *
      * @return array|false List of matching active routines, or false on failure.
      */
     public function getActiveByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' AND 
+            WHERE
+                R.status = 'ACTIVE' AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 R.name ASC"
         );
 
@@ -169,13 +168,13 @@ class RoutineModel
     /**
      * Updates the specified fields of a routine.
      *
-     * Only supported updatable fields are included in the UPDATE statement.
-     * If no valid fields are provided, the method returns false.
+     * Only supported fields are included in the UPDATE statement. Returns false
+     * if no valid fields are provided.
      *
-     * @param int|string $id     ID of the routine to update.
-     * @param array      $fields Associative array of field names and new values.
+     * @param int|string $id     Routine ID.
+     * @param array      $fields Fields to update.
      *
-     * @return bool True if the update statement executes successfully, or false otherwise.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function update(int|string $id, array $fields): bool
     {
@@ -188,9 +187,9 @@ class RoutineModel
 
         $this->db->query(
             "UPDATE routines
-            SET 
+            SET
                 $queryFields
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -202,15 +201,15 @@ class RoutineModel
 
 
     /**
-     * Creates a new routine using the provided data.
+     * Creates a new routine from the provided data.
      *
      * Only supported creatable fields are retained. The creator ID is set from
      * the current user's session, overriding any supplied creator ID. The method
-     * returns false if the required fields are missing or the insert fails.
+     * returns false if required fields are missing or the insert fails.
      *
-     * @param array $fields Associative array of routine field names and values.
+     * @param array $fields Routine data.
      *
-     * @return int|false ID of the newly created routine, or false on failure.
+     * @return int|false New routine ID, or false if validation or insertion fails.
      */
     public function create(array $fields): int|false
     {
@@ -220,7 +219,7 @@ class RoutineModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO routines(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO routines(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -234,17 +233,17 @@ class RoutineModel
     /**
      * Marks a routine as deleted without permanently removing the record.
      *
-     * @param string $id Routine ID.
+     * @param int|string $id Routine ID.
      *
-     * @return bool True if the routine was marked as deleted, otherwise false.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function softDelete(int|string $id): bool
     {
         $this->db->query(
-            "UPDATE ROUTINES
-            SET 
+            "UPDATE routines
+            SET
                 status = :status
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -255,39 +254,39 @@ class RoutineModel
     }
 
     /**
-     * Retrieves all active routines for export, including their project, creator,
-     * and business names, along with their recurrence settings, priority, status,
-     * and creation and update timestamps. Results are ordered alphabetically
-     * by routine name.
+     * Retrieves active routines for export, including project, creator, and
+     * business names, recurrence settings, priority, status, and timestamps.
+     *
+     * Results are ordered by routine name.
      *
      * @return array|false List of active routines for export, or false on failure.
      */
     public function export(): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
                 R.recurrence_rule,
                 R.recurrence_value,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name, 
-                B.legal_name as business_name,
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name,
+                B.legal_name AS business_name,
                 R.status,
                 R.created_at,
                 R.updated_at
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' 
-            ORDER BY 
+            WHERE
+                R.status = 'ACTIVE'
+            ORDER BY
                 R.name ASC"
         );
 
@@ -295,41 +294,41 @@ class RoutineModel
     }
 
     /**
-     * Retrieves all active routines associated with the specified business for
-     * export, including their project and creator names, recurrence settings,
-     * priority, status, and creation and update timestamps. Results are ordered
-     * alphabetically by routine name.
+     * Retrieves active routines for a business export, including project and
+     * creator names, recurrence settings, priority, status, and timestamps.
+     *
+     * Results are ordered by routine name.
      *
      * @param int|string $business_id Business ID used to filter the routines.
      *
-     * @return array|false List of matching active routines for export, or false on failure.
+     * @return array|false Matching active routines for export, or false on failure.
      */
     public function exportByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                R.id, 
+            "SELECT
+                R.id,
                 R.name,
                 R.is_recurrent,
                 R.recurrence_rule,
                 R.recurrence_value,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name,
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name,
                 R.status,
                 R.created_at,
                 R.updated_at
-            FROM routines R 
-            INNER JOIN users U ON 
-                U.id = R.creator_id 
-            INNER JOIN projects P ON 
-                P.id = R.project_id 
+            FROM routines R
+            INNER JOIN users U ON
+                U.id = R.creator_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
-                R.status = 'ACTIVE' AND 
+            WHERE
+                R.status = 'ACTIVE' AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 R.name ASC"
         );
 

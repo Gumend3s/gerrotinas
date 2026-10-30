@@ -14,14 +14,14 @@ require APP_ROOT . "/Views/routines/components/summary.php";
         <div class="col-12 col-sm">
             <input id="search" data-table="#actions" class="form-control fs-7" type="text" placeholder="Pesquisar...">
         </div>
-        <div class="col-6 col-sm-auto">
-            <a href="<?= APP_BASE_URL ?>/actions/upsert/<?= $routine_id ?>" class="btn btn-primary btn-responsive" aria-label="Adicionar ação">
+        <div class="col col-sm-auto">
+            <a href="<?= APP_BASE_URL ?>/actions/upsert/<?= $routine->id ?>" class="btn btn-primary btn-responsive" aria-label="Adicionar ação">
                 <i class="bi bi-plus-lg"></i>
                 Adicionar
             </a>
         </div>
-        <div class="col-6 col-sm-auto">
-            <a href="<?= APP_BASE_URL ?>/actions/export/<?= $routine_id ?>" class="btn btn-export text-white btn-responsive" aria-label="Exportar ações">
+        <div class="col col-sm-auto">
+            <a href="<?= APP_BASE_URL ?>/actions/export/<?= $routine->id ?>" class="btn btn-export text-white btn-responsive" aria-label="Exportar ações">
                 <i class="bi bi-download"></i>
                 Exportar
             </a>
@@ -46,7 +46,7 @@ require APP_ROOT . "/Views/routines/components/summary.php";
                         </tr>
                     <?php else: ?>
                         <?php foreach ($actions as $action): ?>
-                            <tr data-href="<?= APP_BASE_URL ?>/actions/upsert/<?= $routine_id ?>/<?= $action->id ?>" class="cursor-pointer">
+                            <tr data-href="<?= APP_BASE_URL ?>/actions/upsert/<?= $routine->id ?>/<?= $action->id ?>" class="cursor-pointer">
                                 <td>
                                     <?= Helper::escape($action->name) ?>
                                 </td>

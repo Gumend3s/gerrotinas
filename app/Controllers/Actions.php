@@ -10,7 +10,7 @@ class Actions extends Controller
     private ActionModel $actionModel;
     private RoutineModel $routineModel;
 
-    private const REQUIRED_ACCESS = ['FINANCE' => 'ADMINISTRATOR', 'SALES' => 'ADMINISTRATOR'];
+    private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
 
     public function __construct()
     {
@@ -34,7 +34,7 @@ class Actions extends Controller
      */
     private function getRoutine(int|string $routine_id): object
     {
-        if (!($routine = $this->routineModel->findBy(['id' => $routine_id], activeOnly: true))) {
+        if (!($routine = $this->routineModel->findBy(['id' => $routine_id, 'status' => 'ACTIVE']))) {
             Alert::flash('routines', 'Erro: rotina não encontrada', 'error');
             Helper::redirect('routines');
         }
@@ -45,23 +45,6 @@ class Actions extends Controller
         }
 
         return $routine;
-    }
-
-    /**
-     * Returns routine data formatted for use in the actions views.
-     *
-     * @param object $routine Routine data.
-     *
-     * @return array Formatted routine data.
-     */
-    private function getRoutineData(object $routine): array
-    {
-        return [
-            'routine_id' => $routine->id,
-            'routine_name' => $routine->name,
-            'project_name' => $routine->project_name,
-            'routine_priority' => Label::enum('priority', $routine->priority),
-        ];
     }
 
     /**
@@ -77,7 +60,7 @@ class Actions extends Controller
      */
     private function getAction(int|string $routine_id, int|string $id): object
     {
-        if (!($action = $this->actionModel->findBy(['routine_id' => $routine_id, 'id' => $id], activeOnly: true))) {
+        if (!($action = $this->actionModel->findBy(['routine_id' => $routine_id, 'id' => $id, 'status' => 'ACTIVE']))) {
             Alert::flash('actions', 'Erro: ação não encontrada', 'error');
             Helper::redirect("actions/index/$routine_id");
         }
@@ -99,9 +82,10 @@ class Actions extends Controller
     {
         $routine = $this->getRoutine($routine_id);
 
-        $data = array_merge($this->getRoutineData($routine), [
+        $data = [
+            'routine' => $routine,
             'actions' => $this->actionModel->getRoutineActiveActions($routine_id),
-        ]);
+        ];
 
         $this->view('actions/index', $data);
     }
@@ -143,7 +127,7 @@ class Actions extends Controller
             }
         }
 
-        $this->view('actions/upsert', array_merge($data, $this->getRoutineData($routine), $this->getViewData()));
+        $this->view('actions/upsert', array_merge($data, ['routine' => $routine], $this->getViewData()));
     }
 
     /**

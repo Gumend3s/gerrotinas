@@ -20,21 +20,21 @@ class ProjectModel
     ];
     private const SEARCHABLE_FIELDS = [
         'id',
-        'name'
+        'name',
+        'status'
     ];
 
     /**
      * Returns a project matching the specified searchable fields.
      *
-     * Filters the search values to the supported searchable fields and optionally
-     * restricts the search to active projects.
+     * Filters the search values to the supported searchable fields. Include a
+     * status value in $searchValues to restrict the result by status.
      *
-     * @param array $searchValues Searchable field values.
-     * @param bool  $activeOnly   Whether to restrict the search to active projects.
+     * @param array $searchValues Values for supported project fields.
      *
-     * @return object|false Project data object if found, otherwise false.
+     * @return object|false Project data if found, otherwise false.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -44,17 +44,16 @@ class ProjectModel
         $conditions = implode(' AND ', array_map(fn($field) => "P.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                P.id, 
+            "SELECT
+                P.id,
                 P.name,
                 P.status
-            FROM projects P 
+            FROM projects P
             WHERE
-                $conditions" . ($activeOnly ? ' AND P.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
     }
@@ -62,24 +61,24 @@ class ProjectModel
     /**
      * Returns all active projects ordered by name.
      *
-     * @return array|false List of projects or false on failure.
+     * @return array|false List of active projects, or false on failure.
      */
     public function getActive(): array|false
     {
         $this->db->query(
-            "SELECT 
-                P.id, 
-                P.name, 
-                U.name as creator_name, 
-                B.legal_name as business_name 
-            FROM projects P 
+            "SELECT
+                P.id,
+                P.name,
+                U.name AS creator_name,
+                B.legal_name AS business_name
+            FROM projects P
             INNER JOIN users U ON
                 U.id = P.creator_id
             INNER JOIN businesses B ON
                 B.id = P.business_id
-            WHERE 
+            WHERE
                 P.status = 'ACTIVE'
-            ORDER BY 
+            ORDER BY
                 P.name"
         );
 
@@ -87,26 +86,30 @@ class ProjectModel
     }
 
     /**
-     * Returns all active projects ordered by name.
+     * Retrieves active projects created by users associated with a business.
      *
-     * @return array|false List of projects or false on failure.
+     * Results are ordered by project name.
+     *
+     * @param int|string $business_id Business ID used to filter project creators.
+     *
+     * @return array|false List of matching projects, or false on failure.
      */
     public function getActiveByBusiness(int|string $business_id): array|false
     {
         $this->db->query(
-            "SELECT 
-                P.id, 
-                P.name, 
-                U.name as creator_name 
-            FROM projects P 
+            "SELECT
+                P.id,
+                P.name,
+                U.name AS creator_name
+            FROM projects P
             INNER JOIN users U ON
                 U.id = P.creator_id
             INNER JOIN businesses B ON
                 B.id = U.business_id
-            WHERE 
+            WHERE
                 P.status = 'ACTIVE' AND
                 U.business_id = :business_id
-            ORDER BY 
+            ORDER BY
                 P.name"
         );
 
@@ -137,9 +140,9 @@ class ProjectModel
 
         $this->db->query(
             "UPDATE projects
-            SET 
+            SET
                 $queryFields
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -151,15 +154,15 @@ class ProjectModel
     }
 
     /**
-     * Creates a new project.
+     * Creates a project using the provided data.
      *
-     * The provided array must contain all required project fields.
-     * Additional fields are ignored.
+     * Only supported fields are retained. The business and creator IDs are
+     * set from the current user's session. The method returns false if
+     * required fields are missing or the insert fails.
      *
      * @param array $fields Project data.
      *
-     * @return int|false Id of the new project if it was created successfully,
-     *                   otherwise false.
+     * @return int|false New project ID, or false if validation or insertion fails.
      */
     public function create(array $fields): int|false
     {
@@ -170,7 +173,7 @@ class ProjectModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO projects(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO projects(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -182,25 +185,25 @@ class ProjectModel
     }
 
     /**
-     * Soft deletes a project and removes its customer associations.
+     * Marks a project as deleted and detaches its routines.
      *
-     * Marks the project as deleted and sets the customer_group_id of
-     * all associated routines to null.
+     * The project record is retained, and the project_id of associated
+     * routines is set to null.
      *
      * @param int|string $id Project ID.
      *
-     * @return bool True if both operations were executed successfully, otherwise false.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function softDelete(int|string $id): bool
     {
         $this->db->query(
             "UPDATE projects P
-            LEFT JOIN routines R ON 
+            LEFT JOIN routines R ON
                 P.id = R.project_id
             SET
                 P.status = :status,
                 R.project_id = NULL
-            WHERE 
+            WHERE
                 P.id = :id"
         );
 

@@ -128,6 +128,27 @@ class Helper
     }
 
     /**
+     * Converts a timestamp between Brazilian and database display formats.
+     *
+     * @param string $timestamp   Timestamp to convert.
+     * @param bool   $toDatabase  Whether to convert the date to database format.
+     * @param bool   $includeTime Whether to include the time in the result.
+     *
+     * @return string Converted timestamp.
+     */
+    public static function convertTimestampFormat(string $timestamp, bool $toDatabase = false, bool $includeTime = true): string
+    {
+        $parts = explode(' ', trim($timestamp), 2);
+        $date = self::convertDateFormat($parts[0], $toDatabase);
+
+        if (!$includeTime || !isset($parts[1])) return $date;
+
+        $time = $toDatabase ? $parts[1] : substr($parts[1], 0, 5);
+
+        return "$date $time";
+    }
+
+    /**
      * Appends a structured entry to a log file, creating the directory if needed.
      *
      * @param string $action  Action performed (e.g. "CREATE", "UPDATE", "DELETE").
