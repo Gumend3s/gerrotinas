@@ -35,27 +35,27 @@
             ) ?>
         </div>
 
-        <div class="row justify-content-between g-1">
+        <div class="row g-1">
             <?php if (!$isOwnUser && $isEditing): ?>
-                <div class="col-7">
+                <div class="col col-sm-auto">
                     <div class="row g-1">
-                        <div class="col-4 col-sm-auto">
+                        <div class="col col-sm-auto">
                             <span class="btn btn-danger confirm-action btn-responsive" data-href="<?= APP_BASE_URL ?>/users/delete/<?= $id ?>" data-title="Quer mesmo deletar esse usuário?" data-text="Essa ação é irreversível" data-confirm-text="Sim, deletar" data-icon="warning">Deletar</span>
                         </div>
-                        <div class="col-8 col-sm-auto">
+                        <div class="col col-sm-auto">
                             <span class="btn btn-secondary confirm-action btn-responsive" data-href="<?= APP_BASE_URL ?>/users/resetPassword/<?= $id ?>" data-title="Quer mesmo redefinir a senha desse usuário?" data-text="Essa ação é irreversível" data-confirm-text="Sim, redefinir" data-icon="warning">Redefinir Senha</span>
                         </div>
                     </div>
                 </div>
             <?php endif; ?>
 
-            <div class="<?= (!$isOwnUser && $isEditing) ? 'col-5' : 'col-12' ?> col-sm-auto ms-sm-auto">
+            <div class="col col-sm-auto ms-sm-auto">
                 <div class="row g-1">
-                    <div class="col-6 col-sm-auto">
+                    <div class="col col-sm-auto">
                         <a href="<?= APP_BASE_URL ?>/users" class="btn btn-secondary btn-responsive">Voltar</a>
                     </div>
 
-                    <div class="col-6 col-sm-auto">
+                    <div class="col col-sm-auto">
                         <button type="submit" class="btn btn-primary btn-responsive">
                             <?= $isEditing ? 'Salvar' : 'Cadastrar' ?>
                         </button>

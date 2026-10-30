@@ -17,9 +17,9 @@
             <?php Input::numeric($data, 'cnpj', 'CNPJ', 'Ex: 00.000.000/0001-00', 'col-12 col-sm-4', classes: 'cnpj') ?>
         </div>
 
-        <div class="row justify-content-between g-1">
+        <div class="row g-1">
             <?php if ($isEditing): ?>
-                <div class="col-4">
+                <div class="col col-sm-auto">
                     <span
                         class="btn btn-danger confirm-action btn-responsive"
                         data-href="<?= APP_BASE_URL ?>/businesses/delete/<?= $id ?>"
@@ -32,13 +32,13 @@
                 </div>
             <?php endif; ?>
 
-            <div class="<?= $isEditing ? 'col-8' : 'col-12' ?> col-sm-auto ms-sm-auto">
+            <div class="col col-sm-auto ms-sm-auto">
                 <div class="row g-1">
-                    <div class="col-6 col-sm-auto">
+                    <div class="col col-sm-auto">
                         <a href="<?= APP_BASE_URL ?>/businesses/index" class="btn btn-secondary btn-responsive">Voltar</a>
                     </div>
 
-                    <div class="col-6 col-sm-auto">
+                    <div class="col col-sm-auto">
                         <button type="submit" class="btn btn-primary btn-responsive">
                             <?= $isEditing ? 'Salvar' : 'Cadastrar' ?>
                         </button>

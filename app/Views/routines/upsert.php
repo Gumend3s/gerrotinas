@@ -38,9 +38,9 @@
             ?>
         </div>
 
-        <div class="row justify-content-between g-1">
+        <div class="row g-1">
             <?php if ($isEditing): ?>
-                <div class="col-4">
+                <div class="col col-sm-auto">
                     <span
                         class="btn btn-danger confirm-action btn-responsive"
                         data-href="<?= APP_BASE_URL ?>/routines/delete/<?= $id ?>"
@@ -53,7 +53,7 @@
                 </div>
             <?php endif; ?>
 
-            <div class="<?= $isEditing ? 'col-8' : 'col-12' ?> col-sm-auto ms-sm-auto">
+            <div class="col col-sm-auto ms-sm-auto">
                 <div class="row g-1">
                     <div class="col col-sm-auto">
                         <a href="<?= APP_BASE_URL . ($isEditing ? "/actions/index/$id" : "/routines") ?>" class="btn btn-secondary btn-responsive">Voltar</a>

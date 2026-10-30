@@ -9,15 +9,15 @@
     <hr class="mt-0">
     <form name="projectForm" method="POST" action="<?= APP_BASE_URL ?>/projects/upsert<?= $isEditing ? "/$id" : '' ?><?= $routine_id != '' ? "?routine_id=$routine_id" : '' ?>" novalidate class="row g-1">
         <?php Input::text($data, 'name', 'Nome', 'Ex: ...', 'col-12 col-sm') ?>
-        <div class="col-12 col-sm-auto">
+        <div class="col col-sm-auto">
             <label class="invisible d-none d-sm-block">.</label>
             <div class="row g-1">
                 <?php if ($isEditing): ?>
-                    <div class="col-4 col-sm-auto">
+                    <div class="col col-sm-auto">
                         <a href="<?= APP_BASE_URL ?>/projects/index<?= $routine_id != '' ? "?routine_id=$routine_id" : '' ?>" class="btn btn-secondary btn-responsive">Cancelar</a>
                     </div>
                 <?php endif; ?>
-                <div class="<?= $isEditing ? 'col-4' : 'col-6' ?> col-sm-auto">
+                <div class="col col-sm-auto">
                     <button type="submit" class="btn btn-primary btn-responsive">
                         <?= $isEditing ? 'Salvar' : 'Cadastrar' ?>
                     </button>

@@ -14,14 +14,14 @@
         </div>
 
         <?php if (isset($showActions)): ?>
-            <div class="d-flex gap-1 justify-content-end">
+            <div class="row g-1 justify-content-end">
                 <?php if (in_array('go_back', $showActions, true)): ?>
-                    <div class="col-12 col-sm-auto">
+                    <div class="col col-sm-auto">
                         <a href="<?= APP_BASE_URL ?>/routines" class="btn btn-secondary btn-responsive">Voltar</a>
                     </div>
                 <?php endif; ?>
                 <?php if (in_array('go_to_upsert', $showActions, true)): ?>
-                    <div class="col-12 col-sm-auto">
+                    <div class="col col-sm-auto">
                         <a href="<?= APP_BASE_URL ?>/routines/upsert/<?= $routine_id ?>" class="btn btn-primary btn-responsive">Editar</a>
                     </div>
                 <?php endif; ?>
