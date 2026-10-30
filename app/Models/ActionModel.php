@@ -14,7 +14,7 @@ class ActionModel
     private const SEARCHABLE_FIELDS = ['id', 'name', 'routine_id', 'status'];
 
     /**
-     * Retrieves the available priority values defined in the database schema.
+     * Retrieves the action priority values defined in the database schema.
      *
      * @return string Comma-separated list of valid priority values.
      */
@@ -24,14 +24,14 @@ class ActionModel
     }
 
     /**
-     * Returns an action matching the specified searchable fields.
+     * Finds an action matching the specified searchable fields.
      *
-     * Filters the search values to the supported searchable fields and optionally
-     * restricts the search to active actions.
+     * Filters the search values to the supported searchable fields. Include a
+     * status value in $searchValues to restrict the result by status.
      *
      * @param array $searchValues Values for supported action fields.
      *
-     * @return object|false Action data object if found, otherwise false.
+     * @return object|false Action data if found, otherwise false.
      */
     public function findBy(array $searchValues): object|false
     {
@@ -60,9 +60,11 @@ class ActionModel
     }
 
     /**
-     * Returns all active actions from a routine ordered by name.
+     * Retrieves active actions for a routine, ordered by action name.
      *
-     * @return array|false List of actions or false on failure.
+     * @param int|string $routineId Routine ID.
+     *
+     * @return array|false List of active actions, or false on failure.
      */
     public function getRoutineActiveActions(int|string $routineId): array|false
     {
@@ -70,7 +72,7 @@ class ActionModel
             "SELECT
                 A.id,
                 A.name,
-                U.name as creator_name, 
+                U.name AS creator_name,
                 A.priority
             FROM actions A
             INNER JOIN users U ON
@@ -124,13 +126,13 @@ class ActionModel
     /**
      * Creates a new action.
      *
-     * The provided array must contain all required action fields.
-     * Additional fields are ignored.
+     * Only supported fields are retained, and the creator ID is taken from
+     * the current user's session. The method returns false if required fields
+     * are missing or the insert fails.
      *
      * @param array $fields Action data.
-     * 
-     *  @return int|false Id of the new action if it was created successfully,
-     *                   otherwise false.
+     *
+     * @return int|false New action ID, or false if validation or insertion fails.
      */
     public function create(array $fields): int|false
     {
@@ -152,18 +154,11 @@ class ActionModel
     }
 
     /**
-     * Marks an action, its active jobs and active shifts as deleted and
-     * removes all relationships from its jobs within the same transaction.
-     *
-     * If any active shift from the action has an active position, no changes
-     * are persisted.
+     * Executes the action soft-delete update.
      *
      * @param int|string $id Action ID.
      *
-     * @return bool True if the action was marked as deleted and its jobs'
-     *              relationships were removed successfully, otherwise false.
-     *
-     * @throws Throwable If an error occurs while executing the transaction.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function softDelete(int|string $id): bool
     {
@@ -185,7 +180,7 @@ class ActionModel
      *
      * @param int|string $routine_id Routine ID.
      *
-     * @return array|false List of actions or false on failure.
+     * @return array|false List of active actions for the routine, or false on failure.
      */
     public function exportRoutineActions(int|string $routine_id): array|false
     {

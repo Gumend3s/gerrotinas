@@ -30,7 +30,7 @@ class RoutineModel
     private const SEARCHABLE_FIELDS = ['id', 'name', 'project_id', 'status'];
 
     /**
-     * Retrieves the available priority values defined in the database schema.
+     * Retrieves the routine priority values defined in the database schema.
      *
      * @return string Comma-separated list of valid priority values.
      */
@@ -40,7 +40,7 @@ class RoutineModel
     }
 
     /**
-     * Retrieves the available recurrence rule values defined in the database schema.
+     * Retrieves recurrence rule values defined in the database schema.
      *
      * @return string Comma-separated list of valid recurrence rule values.
      */
@@ -54,7 +54,7 @@ class RoutineModel
      *
      * Only supported searchable fields are considered. If no valid search fields
      * are provided, the method returns false. Optionally, the search can be
-     * restricted to routines with ACTIVE status.
+     * restricted by including a status value in $searchValues.
      *
      * @param array $searchValues Values for supported routine fields.
      *
@@ -94,8 +94,9 @@ class RoutineModel
     }
 
     /**
-     * Retrieves all active routines, including their project, creator, and business
-     * names, ordered alphabetically by routine name.
+     * Retrieves active routines with their project, creator, and business names.
+     *
+     * Results are ordered by routine name.
      *
      * @return array|false List of active routines, or false on failure.
      */
@@ -127,11 +128,11 @@ class RoutineModel
     }
 
     /**
-     * Retrieves all active routines associated with the specified business,
-     * including their project and creator names, ordered alphabetically by
-     * routine name.
+     * Retrieves active routines associated with the specified business.
      *
-     * @param  int|string  $business_id Business ID used to filter the routines.
+     * Results include project and creator names and are ordered by routine name.
+     *
+     * @param int|string $business_id Business ID used to filter the routines.
      *
      * @return array|false List of matching active routines, or false on failure.
      */
@@ -167,13 +168,13 @@ class RoutineModel
     /**
      * Updates the specified fields of a routine.
      *
-     * Only supported updatable fields are included in the UPDATE statement.
-     * If no valid fields are provided, the method returns false.
+     * Only supported fields are included in the UPDATE statement. Returns false
+     * if no valid fields are provided.
      *
-     * @param int|string $id     ID of the routine to update.
-     * @param array      $fields Associative array of field names and new values.
+     * @param int|string $id     Routine ID.
+     * @param array      $fields Fields to update.
      *
-     * @return bool True if the update statement executes successfully, or false otherwise.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function update(int|string $id, array $fields): bool
     {
@@ -200,15 +201,15 @@ class RoutineModel
 
 
     /**
-     * Creates a new routine using the provided data.
+     * Creates a new routine from the provided data.
      *
      * Only supported creatable fields are retained. The creator ID is set from
      * the current user's session, overriding any supplied creator ID. The method
-     * returns false if the required fields are missing or the insert fails.
+     * returns false if required fields are missing or the insert fails.
      *
-     * @param array $fields Associative array of routine field names and values.
+     * @param array $fields Routine data.
      *
-     * @return int|false ID of the newly created routine, or false on failure.
+     * @return int|false New routine ID, or false if validation or insertion fails.
      */
     public function create(array $fields): int|false
     {
@@ -232,15 +233,15 @@ class RoutineModel
     /**
      * Marks a routine as deleted without permanently removing the record.
      *
-     * @param string $id Routine ID.
+     * @param int|string $id Routine ID.
      *
-     * @return bool True if the routine was marked as deleted, otherwise false.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function softDelete(int|string $id): bool
     {
         $this->db->query(
-            "UPDATE ROUTINES
-            SET 
+            "UPDATE routines
+            SET
                 status = :status
             WHERE
                 id = :id"
@@ -253,10 +254,10 @@ class RoutineModel
     }
 
     /**
-     * Retrieves all active routines for export, including their project, creator,
-     * and business names, along with their recurrence settings, priority, status,
-     * and creation and update timestamps. Results are ordered alphabetically
-     * by routine name.
+     * Retrieves active routines for export, including project, creator, and
+     * business names, recurrence settings, priority, status, and timestamps.
+     *
+     * Results are ordered by routine name.
      *
      * @return array|false List of active routines for export, or false on failure.
      */
@@ -269,10 +270,10 @@ class RoutineModel
                 R.is_recurrent,
                 R.recurrence_rule,
                 R.recurrence_value,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name, 
-                B.legal_name as business_name,
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name,
+                B.legal_name AS business_name,
                 R.status,
                 R.created_at,
                 R.updated_at
@@ -293,14 +294,14 @@ class RoutineModel
     }
 
     /**
-     * Retrieves all active routines associated with the specified business for
-     * export, including their project and creator names, recurrence settings,
-     * priority, status, and creation and update timestamps. Results are ordered
-     * alphabetically by routine name.
+     * Retrieves active routines for a business export, including project and
+     * creator names, recurrence settings, priority, status, and timestamps.
+     *
+     * Results are ordered by routine name.
      *
      * @param int|string $business_id Business ID used to filter the routines.
      *
-     * @return array|false List of matching active routines for export, or false on failure.
+     * @return array|false Matching active routines for export, or false on failure.
      */
     public function exportByBusiness(int|string $business_id): array|false
     {
@@ -311,9 +312,9 @@ class RoutineModel
                 R.is_recurrent,
                 R.recurrence_rule,
                 R.recurrence_value,
-                R.priority, 
-                P.name as project_name,
-                U.name as creator_name,
+                R.priority,
+                P.name AS project_name,
+                U.name AS creator_name,
                 R.status,
                 R.created_at,
                 R.updated_at

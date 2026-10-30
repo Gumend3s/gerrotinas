@@ -99,7 +99,7 @@ class Projects extends Controller
      */
     public function delete(int|string $id): void
     {
-        if ($this->projectModel->softDelete($id)) Alert::flash('projects', "Grupo de clientes deletado com sucesso");
+        if ($this->projectModel->softDelete($id)) Alert::flash('projects', "Projeto deletado com sucesso");
         else Alert::flash('projects', 'Erro: falha ao deletar projeto', 'error');
 
         Helper::redirect('projects' . (isset($_GET['routine_id']) ? "?routine_id={$_GET['routine_id']}" : ''));

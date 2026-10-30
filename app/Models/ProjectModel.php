@@ -32,7 +32,7 @@ class ProjectModel
      *
      * @param array $searchValues Values for supported project fields.
      *
-     * @return object|false Project data object if found, otherwise false.
+     * @return object|false Project data if found, otherwise false.
      */
     public function findBy(array $searchValues): object|false
     {
@@ -61,7 +61,7 @@ class ProjectModel
     /**
      * Returns all active projects ordered by name.
      *
-     * @return array|false List of projects or false on failure.
+     * @return array|false List of active projects, or false on failure.
      */
     public function getActive(): array|false
     {
@@ -86,9 +86,13 @@ class ProjectModel
     }
 
     /**
-     * Returns all active projects ordered by name.
+     * Retrieves active projects created by users associated with a business.
      *
-     * @return array|false List of projects or false on failure.
+     * Results are ordered by project name.
+     *
+     * @param int|string $business_id Business ID used to filter project creators.
+     *
+     * @return array|false List of matching projects, or false on failure.
      */
     public function getActiveByBusiness(int|string $business_id): array|false
     {
@@ -150,15 +154,15 @@ class ProjectModel
     }
 
     /**
-     * Creates a new project.
+     * Creates a project using the provided data.
      *
-     * The provided array must contain all required project fields.
-     * Additional fields are ignored.
+     * Only supported fields are retained. The business and creator IDs are
+     * set from the current user's session. The method returns false if
+     * required fields are missing or the insert fails.
      *
      * @param array $fields Project data.
      *
-     * @return int|false Id of the new project if it was created successfully,
-     *                   otherwise false.
+     * @return int|false New project ID, or false if validation or insertion fails.
      */
     public function create(array $fields): int|false
     {
@@ -181,14 +185,14 @@ class ProjectModel
     }
 
     /**
-     * Soft deletes a project and removes its customer associations.
+     * Marks a project as deleted and detaches its routines.
      *
-     * Marks the project as deleted and sets the customer_group_id of
-     * all associated routines to null.
+     * The project record is retained, and the project_id of associated
+     * routines is set to null.
      *
      * @param int|string $id Project ID.
      *
-     * @return bool True if both operations were executed successfully, otherwise false.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function softDelete(int|string $id): bool
     {

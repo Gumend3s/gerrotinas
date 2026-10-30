@@ -1,11 +1,18 @@
 <?php Alert::render('projects') ?>
 <div class="d-flex flex-column card shadow-sm border-0 p-3 p-md-4">
-    <h4 class="fw-bold mb-0">Projetos</h4>
-    <p class="text-muted mb-2">
-        <?= $isEditing
-            ? 'Atualize as informações do projeto selecionado'
-            : 'Preencha os dados para cadastrar um novo projeto' ?>
-    </p>
+    <div class="row g-1">
+        <div class="col-12 col-sm-auto">
+            <h4 class="fw-bold mb-0">Projetos</h4>
+            <p class="text-muted mb-2">
+                <?= $isEditing
+                    ? 'Atualize as informações do projeto selecionado'
+                    : 'Preencha os dados para cadastrar um novo projeto' ?>
+            </p>
+        </div>
+        <div class="col-12 col-sm-auto ms-sm-auto">
+            <a href="<?= APP_BASE_URL ?>/routines/upsert<?= $routine_id !== '' ? "/$routine_id" : '' ?>" class="btn btn-secondary btn-responsive">Voltar <i class="bi bi-skip-backward"></i></a>
+        </div>
+    </div>
     <hr class="mt-0">
     <form name="projectForm" method="POST" action="<?= APP_BASE_URL ?>/projects/upsert<?= $isEditing ? "/$id" : '' ?><?= $routine_id != '' ? "?routine_id=$routine_id" : '' ?>" novalidate class="row g-1">
         <?php Input::text($data, 'name', 'Nome', 'Ex: ...', 'col-12 col-sm') ?>
@@ -21,9 +28,6 @@
                     <button type="submit" class="btn btn-primary btn-responsive">
                         <?= $isEditing ? 'Salvar' : 'Cadastrar' ?>
                     </button>
-                </div>
-                <div class="<?= $isEditing ? 'col-4' : 'col-6' ?> col-sm-auto">
-                    <a href="<?= APP_BASE_URL ?>/routines/upsert<?= $routine_id != '' ? "/$routine_id" : '' ?>" class="btn btn-secondary btn-responsive">Voltar</a>
                 </div>
             </div>
         </div>
