@@ -48,23 +48,6 @@ class Actions extends Controller
     }
 
     /**
-     * Returns routine data formatted for use in the actions views.
-     *
-     * @param object $routine Routine data.
-     *
-     * @return array Formatted routine data.
-     */
-    private function getRoutineData(object $routine): array
-    {
-        return [
-            'routine_id' => $routine->id,
-            'routine_name' => $routine->name,
-            'project_name' => $routine->project_name,
-            'routine_priority' => Label::enum('priority', $routine->priority),
-        ];
-    }
-
-    /**
      * Returns an active action matching the specified routine and ID.
      *
      * If the action cannot be found, the user is redirected to the
@@ -99,9 +82,10 @@ class Actions extends Controller
     {
         $routine = $this->getRoutine($routine_id);
 
-        $data = array_merge($this->getRoutineData($routine), [
+        $data = [
+            'routine' => $routine,
             'actions' => $this->actionModel->getRoutineActiveActions($routine_id),
-        ]);
+        ];
 
         $this->view('actions/index', $data);
     }
@@ -143,7 +127,7 @@ class Actions extends Controller
             }
         }
 
-        $this->view('actions/upsert', array_merge($data, $this->getRoutineData($routine), $this->getViewData()));
+        $this->view('actions/upsert', array_merge($data, ['routine' => $routine], $this->getViewData()));
     }
 
     /**

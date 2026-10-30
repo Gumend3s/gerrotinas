@@ -23,7 +23,7 @@
                     'col-12 col-sm-6'
                 ) ?>
             <?php else: ?>
-                <?php Display::text($data, 'business_name', 'Empresa', 'col-12 col-sm-6') ?>
+                <?php Display::text($business_name ?? null, 'business_name', 'Empresa', 'col-12 col-sm-6') ?>
             <?php endif; ?>
 
             <?= Input::select(

@@ -4,13 +4,13 @@
     <hr class="mt-0">
     <div class="d-flex flex-column mt-1 gap-3">
         <div class="row g-3">
-            <?php Display::text($data, 'routine_id', 'Código', 'col-12 col-sm-2') ?>
+            <?php Display::text((string) $routine->id, 'routine_id', 'Código', 'col-12 col-sm-2') ?>
             
-            <?php Display::text($data, 'routine_name', 'Nome', 'col-12 col-sm-4') ?>
+            <?php Display::text($routine->name, 'routine_name', 'Nome', 'col-12 col-sm-4') ?>
 
-            <?php Display::text($data, 'project_name', 'Projeto', 'col-12 col-sm-4') ?>
+            <?php Display::text($routine->project_name, 'project_name', 'Projeto', 'col-12 col-sm-4') ?>
 
-            <?php Display::text($data, 'routine_priority', 'Prioridade', 'col-12 col-sm-2') ?>
+            <?php Display::enum($routine->priority, 'routine_priority', 'Prioridade', 'col-12 col-sm-2', enum: 'priority') ?>
         </div>
 
         <?php if (isset($showActions)): ?>
@@ -22,7 +22,7 @@
                 <?php endif; ?>
                 <?php if (in_array('go_to_upsert', $showActions, true)): ?>
                     <div class="col col-sm-auto">
-                        <a href="<?= APP_BASE_URL ?>/routines/upsert/<?= $routine_id ?>" class="btn btn-primary btn-responsive">Editar</a>
+                        <a href="<?= APP_BASE_URL ?>/routines/upsert/<?= $routine->id ?>" class="btn btn-primary btn-responsive">Editar</a>
                     </div>
                 <?php endif; ?>
             </div>
