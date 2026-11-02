@@ -291,7 +291,7 @@ class Helper
 
         fputcsv($file, mb_convert_encoding($headers, 'ISO-8859-1', 'UTF-8'), ';', '"', '');
 
-        foreach ($rows as $row) fputcsv($file, array_map(fn($value) => mb_convert_encoding($value, 'ISO-8859-1', 'UTF-8'), (array) $row), ';', '"', '');
+        foreach ($rows as $row) fputcsv($file, array_map(fn($value) => mb_convert_encoding($value ?? '', 'ISO-8859-1', 'UTF-8'), (array) $row), ';', '"', '');
 
         fclose($file);
         exit();

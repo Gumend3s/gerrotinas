@@ -174,7 +174,7 @@ class Actions extends Controller
             }
 
             $header = array_map(fn($field) => Label::field('action', $field), ['id', 'name', 'creator_name', 'priority', 'created_at', 'updated_at', 'status']);
-            $fileName = "Operações $routine->customer_name [$routine->name]";
+            $fileName = "Ações $routine->name";
 
             Helper::exportCsv($actions, $header, $fileName);
         } else {
