@@ -231,7 +231,7 @@ class RoutineModel
     }
 
     /**
-     * Marks a routine as deleted without permanently removing the record.
+     * Marks a routine and its associated actions as deleted without permanently removing them.
      *
      * @param int|string $id Routine ID.
      *
@@ -240,9 +240,12 @@ class RoutineModel
     public function softDelete(int|string $id): bool
     {
         $this->db->query(
-            "UPDATE routines
+            "UPDATE routines R 
+            INNER JOIN actions A ON
+                A.routine_id = R.id
             SET
-                status = :status
+                R.status = :status,
+                A.status = :status
             WHERE
                 id = :id"
         );
