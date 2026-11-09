@@ -184,12 +184,9 @@ class Actions extends Controller
     }
 
     /**
-     * Retrieves the data required to populate the routine form view.
+     * Retrieves the data required to populate the action form view.
      *
-     * Provides the available projects, priority options, and recurrence rule
-     * options, using display labels for the latter two. Project options are
-     * restricted to the current user's business unless access restrictions
-     * can be bypassed.
+     * Provides the available action priority options with their display labels.
      *
      * @return array Associative array containing the view data.
      */

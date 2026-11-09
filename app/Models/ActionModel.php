@@ -20,7 +20,7 @@ class ActionModel
      */
     public function getPriorities(): string
     {
-        return $this->db->getEnumValues('routines', 'priority');
+        return $this->db->getEnumValues('actions', 'priority');
     }
 
     /**
@@ -165,10 +165,13 @@ class ActionModel
         $this->db->query(
             "UPDATE actions
             SET
-                A.status = :status
+                status = :status
             WHERE
-                A.id = :id"
+                id = :id"
         );
+
+        $this->db->bind('id', $id);
+        $this->db->bind('status', 'DELETED');
 
         return $this->db->execute();
     }
