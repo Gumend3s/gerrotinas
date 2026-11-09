@@ -7,13 +7,13 @@
         <div class="col-12 col-sm">
             <input id="search" data-table="#businesses" class="form-control fs-7" type="text" placeholder="Pesquisar...">
         </div>
-        <div class="col-6 col-sm-auto">
+        <div class="col col-sm-auto">
             <a href="<?= APP_BASE_URL ?>/businesses/upsert" class="btn btn-primary btn-responsive" aria-label="Adicionar empresa">
                 <i class="bi bi-plus-lg"></i>
                 Adicionar
             </a>
         </div>
-        <div class="col-6 col-sm-auto">
+        <div class="col col-sm-auto">
             <a href="<?= APP_BASE_URL ?>/businesses/export" class="btn btn-export text-white btn-responsive" aria-label="Exportar empresas">
                 <i class="bi bi-download"></i>
                 Exportar

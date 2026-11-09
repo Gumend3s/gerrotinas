@@ -20,21 +20,21 @@ class BusinessModel
     ];
     private const SEARCHABLE_FIELDS = [
         'id',
-        'cnpj'
+        'cnpj',
+        'status'
     ];
 
     /**
-     * Returns a user matching the specified searchable fields.
+     * Finds a business matching the specified searchable fields.
      *
-     * Filters the search values to the supported searchable fields and optionally
-     * restricts the search to active users.
+     * Filters the search values to the supported searchable fields. Include a
+     * status value in $searchValues to restrict the result by status.
      *
      * @param array $searchValues Searchable field values.
-     * @param bool  $activeOnly   Whether to restrict the search to active users.
      *
-     * @return object|false User data object if found, otherwise false.
+     * @return object|false Business data if found, otherwise false.
      */
-    public function findBy(array $searchValues, bool $activeOnly = false): object|false
+    public function findBy(array $searchValues): object|false
     {
         $searchValues = array_intersect_key($searchValues, array_flip(self::SEARCHABLE_FIELDS));
 
@@ -44,40 +44,39 @@ class BusinessModel
         $conditions = implode(' AND ', array_map(fn($field) => "B.$field = :$field", $fields));
 
         $this->db->query(
-            "SELECT 
-                B.id, 
-                B.legal_name, 
-                B.trade_name, 
-                B.cnpj, 
+            "SELECT
+                B.id,
+                B.legal_name,
+                B.trade_name,
+                B.cnpj,
                 B.status
-            FROM businesses B 
+            FROM businesses B
             WHERE
-                $conditions" . ($activeOnly ? ' AND B.status = :status' : '')
+                $conditions"
         );
 
         $this->db->bindAll($searchValues);
-        if ($activeOnly) $this->db->bind('status', 'ACTIVE');
 
         return $this->db->fetchSingleRow();
     }
 
     /**
-     * Returns all active users ordered by access level.
+     * Retrieves all active businesses ordered by trade name.
      *
-     * @return array|false List of users or false on failure.
+     * @return array|false List of businesses, or false on failure.
      */
     public function getActive(): array|false
     {
         $this->db->query(
-            "SELECT 
-                B.id, 
+            "SELECT
+                B.id,
                 B.legal_name,
                 B.trade_name,
                 B.cnpj
-            FROM businesses B 
-            WHERE 
-                B.status = 'ACTIVE' 
-            ORDER BY 
+            FROM businesses B
+            WHERE
+                B.status = 'ACTIVE'
+            ORDER BY
                 B.trade_name ASC"
         );
 
@@ -85,13 +84,13 @@ class BusinessModel
     }
 
     /**
-     * Updates one or more user fields.
+     * Updates one or more business fields.
      *
      * Only the provided updatable fields are included in the generated
      * UPDATE statement.
      *
-     * @param string $id     User ID.
-     * @param array  $fields Fields to update.
+     * @param int|string $id     Business ID.
+     * @param array      $fields Fields to update.
      *
      * @return bool True if the update was executed successfully, otherwise false.
      */
@@ -106,9 +105,9 @@ class BusinessModel
 
         $this->db->query(
             "UPDATE businesses
-            SET 
+            SET
                 $queryFields
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -119,15 +118,14 @@ class BusinessModel
     }
 
     /**
-     * Creates a new user.
+     * Creates a new business.
      *
-     * The provided array must contain all required user fields.
+     * The provided array must contain all required business fields.
      * Additional fields are ignored.
      *
-     * @param array $fields User data.
+     * @param array $fields Business data.
      *
-     * @return int|false Id of the new user if it was created successfully,
-     *                   otherwise false.
+     * @return int|false New business ID, or false if validation or insertion fails.
      */
     public function create(array $fields): int|false
     {
@@ -136,7 +134,7 @@ class BusinessModel
         if (count($fields) !== count(self::CREATABLE_FIELDS)) return false;
 
         $this->db->query(
-            "INSERT INTO businesses(" . implode(', ', self::CREATABLE_FIELDS) . ") 
+            "INSERT INTO businesses(" . implode(', ', self::CREATABLE_FIELDS) . ")
             VALUES (:" . implode(', :', self::CREATABLE_FIELDS) . ")"
         );
 
@@ -148,19 +146,19 @@ class BusinessModel
     }
 
     /**
-     * Marks a user as deleted without permanently removing the record.
+     * Marks a business as deleted without permanently removing it.
      *
-     * @param string $id User ID.
+     * @param int|string $id Business ID.
      *
-     * @return bool True if the user was marked as deleted, otherwise false.
+     * @return bool True if the update executes successfully, otherwise false.
      */
     public function softDelete(int|string $id): bool
     {
         $this->db->query(
             "UPDATE businesses
-            SET 
+            SET
                 status = :status
-            WHERE 
+            WHERE
                 id = :id"
         );
 
@@ -171,29 +169,29 @@ class BusinessModel
     }
 
     /**
-     * Retrieves active users for CSV export.
+     * Retrieves active businesses for CSV export.
      *
-     * Returns the user data required for the export, ordered by user level.
+     * Returns business data ordered by trade name.
      *
-     * @return array|false List of users or false on failure.
+     * @return array|false List of businesses, or false on failure.
      */
     public function export(): array|false
     {
         $this->db->query(
-            "SELECT 
-                B.id, 
-                B.trade_name, 
-                B.cnpj, 
-                B.created_at, 
-                B.updated_at, 
-                B.status 
-            FROM businesses B 
-            WHERE 
-                B.status = 'ACTIVE' 
-            ORDER BY 
+            "SELECT
+                B.id,
+                B.trade_name,
+                B.cnpj,
+                B.created_at,
+                B.updated_at,
+                B.status
+            FROM businesses B
+            WHERE
+                B.status = 'ACTIVE'
+            ORDER BY
                 B.trade_name ASC"
         );
-        
+
         return $this->db->fetchAllRows();
     }
 }

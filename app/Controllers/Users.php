@@ -34,7 +34,7 @@ class Users extends Controller
      */
     private function getAccessibleUser(int|string $id): object
     {
-        if (!($user = $this->userModel->findBy(['id' => $id], activeOnly: true))) {
+        if (!($user = $this->userModel->findBy(['id' => $id, 'status' => 'ACTIVE']))) {
             Alert::flash('users', 'Erro: usuário não encontrado', 'error');
             Helper::redirect('users');
         }

@@ -28,24 +28,29 @@
             <?php
             $isRecurrent = $data['is_recurrent'];
 
-            Display::text($data, '', 'Recorrência', 'col-12 col-sm-4 recurrence-display' . ($isRecurrent ? ' d-none' : ''));
+            Display::text(null, '', 'Recorrência', 'col-12 col-sm-4 recurrence-display' . ($isRecurrent ? ' d-none' : ''));
 
-            Display::text($data, '', 'Período', 'col-12 col-sm-4 recurrence-display' . ($isRecurrent ? ' d-none' : ''));
-            
+            Display::text(null, '', 'Período', 'col-12 col-sm-4 recurrence-display' . ($isRecurrent ? ' d-none' : ''));
+
             Input::select($data, 'recurrence_rule', 'Recorrência', $recurrence_rules, 'col-12 col-sm-4 recurrence-input' . ($isRecurrent ? '' : ' d-none'), required: false);
 
             Input::text($data, 'recurrence_value', 'Período', 'Ex: 2', 'col-12 col-sm-4 recurrence-input' . ($isRecurrent ? '' : ' d-none'), required: false, classes: 'number-2');
             ?>
         </div>
 
-        <div class="row justify-content-between g-1">
+        <div class="row g-1">
             <?php if ($isEditing): ?>
-                <div class="col-4">
+                <div class="col col-sm-auto">
                     <span
                         class="btn btn-danger confirm-action btn-responsive"
                         data-href="<?= APP_BASE_URL ?>/routines/delete/<?= $id ?>"
                         data-title="Quer mesmo deletar essa rotina?"
-                        data-html='Essa ação é irreversível.'
+                        data-html='
+                            Essa ação é irreversível.<br><br>
+                            <span class="text-start fw-bold">
+                                Ao fazer isso, também serão deletadas suas ações
+                            </span>
+                        '
                         data-confirm-text="Sim, deletar"
                         data-icon="warning">
                         Deletar
@@ -53,10 +58,10 @@
                 </div>
             <?php endif; ?>
 
-            <div class="<?= $isEditing ? 'col-8' : 'col-12' ?> col-sm-auto ms-sm-auto">
+            <div class="col col-sm-auto ms-sm-auto">
                 <div class="row g-1">
                     <div class="col col-sm-auto">
-                        <a href="<?= APP_BASE_URL ?>/routines/index" class="btn btn-secondary btn-responsive">Voltar</a>
+                        <a href="<?= APP_BASE_URL . ($isEditing ? "/actions/index/$id" : "/routines") ?>" class="btn btn-secondary btn-responsive">Voltar</a>
                     </div>
 
                     <div class="col col-sm-auto">

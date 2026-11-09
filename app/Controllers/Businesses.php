@@ -22,7 +22,7 @@ class Businesses extends Controller
 
     private function getBusiness(int|string $id): object
     {
-        if (!($business = $this->businessModel->findBy(['id' => $id], activeOnly: true))) {
+        if (!($business = $this->businessModel->findBy(['id' => $id, 'status' => 'ACTIVE']))) {
             Alert::flash('businessses', 'Erro: empresa não encontrada', 'error');
             Helper::redirect('businessses');
         }

@@ -7,13 +7,13 @@
         <div class="col-12 col-sm">
             <input id="search" data-table="#routines" class="form-control fs-7" type="text" placeholder="Pesquisar...">
         </div>
-        <div class="col-6 col-sm-auto">
+        <div class="col col-sm-auto">
             <a href="<?= APP_BASE_URL ?>/routines/upsert" class="btn btn-primary btn-responsive" aria-label="Adicionar rotina">
                 <i class="bi bi-plus-lg"></i>
                 Adicionar
             </a>
         </div>
-        <div class="col-6 col-sm-auto">
+        <div class="col col-sm-auto">
             <a href="<?= APP_BASE_URL ?>/routines/export" class="btn btn-export text-white btn-responsive" aria-label="Exportar rotinas">
                 <i class="bi bi-download"></i>
                 Exportar
@@ -43,7 +43,7 @@
                     </tr>
                 <?php else: ?>
                     <?php foreach ($routines as $routine): ?>
-                        <tr data-href="<?= APP_BASE_URL ?>/routines/upsert/<?= $routine->id ?>" class="cursor-pointer">
+                        <tr data-href="<?= APP_BASE_URL ?>/actions/index/<?= $routine->id ?>" class="cursor-pointer">
                             <td>
                                 <?= Helper::escape($routine->project_name) ?>
                             </td>
