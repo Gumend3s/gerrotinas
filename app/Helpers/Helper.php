@@ -322,4 +322,19 @@ class Helper
         readfile($filePath);
         exit;
     }
+
+    /**
+     * Calculates the number of days elapsed since a given date.
+     *
+     * @param string $date Date to compare with today in the Y-m-d format.
+     *
+     * @return int Number of days elapsed since the given date. Negative if the date is in the future.
+     */
+    public static function getDaysSince(string $date): int
+    {
+        $today = new DateTimeImmutable('today');
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $date);
+
+        return (int) $today->diff($date)->format('%r%a') * -1;
+    }
 }
