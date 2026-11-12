@@ -5,24 +5,42 @@
     <div class="d-flex flex-column mt-1 gap-3">
         <div class="row g-3">
             <?php Display::text((string) $routine->id, 'routine_id', 'Código', 'col-12 col-sm-2') ?>
-            
+
             <?php Display::text($routine->name, 'routine_name', 'Nome', 'col-12 col-sm-4') ?>
 
             <?php Display::text($routine->project_name, 'project_name', 'Projeto', 'col-12 col-sm-4') ?>
 
             <?php Display::enum($routine->priority, 'routine_priority', 'Prioridade', 'col-12 col-sm-2', enum: 'priority') ?>
+
+            <?php
+            Display::enum($routine->is_recurrent, 'is_recurrent', 'Recorrente', 'col-12 col-sm-4', enum: 'yes/no');
+
+            Display::enum($routine->recurrence_rule, 'recurrence_rule', 'Recorrência', 'col-12 col-sm-4');
+
+            Display::text($routine->recurrence_value, 'recurrence_value', 'Período', 'col-12 col-sm-4');
+            ?>
         </div>
 
         <?php if (isset($showActions)): ?>
-            <div class="row g-1 justify-content-end">
-                <?php if (in_array('go_back', $showActions, true)): ?>
+            <div class="row g-1">
+                <?php if (in_array('go_to_assign', $showActions, true)): ?>
                     <div class="col col-sm-auto">
+                        <a href="<?= APP_BASE_URL ?>/assignedRoutines/index/<?= $routine->id ?>" class="btn btn-secondary btn-responsive">Delegações</a>
+                    </div>
+                <?php endif; ?>
+                <?php if (in_array('go_back', $showActions, true)): ?>
+                    <div class="col col-sm-auto ms-sm-auto">
                         <a href="<?= APP_BASE_URL ?>/routines" class="btn btn-secondary btn-responsive">Voltar</a>
                     </div>
                 <?php endif; ?>
                 <?php if (in_array('go_to_upsert', $showActions, true)): ?>
                     <div class="col col-sm-auto">
                         <a href="<?= APP_BASE_URL ?>/routines/upsert/<?= $routine->id ?>" class="btn btn-primary btn-responsive">Editar</a>
+                    </div>
+                <?php endif; ?>
+                <?php if (in_array('back_to_actions', $showActions, true)): ?>
+                    <div class="col col-sm-auto ms-sm-auto">
+                        <a href="<?= APP_BASE_URL ?>/actions/index/<?= $routine->id ?>" class="btn btn-secondary btn-responsive">Voltar</a>
                     </div>
                 <?php endif; ?>
             </div>

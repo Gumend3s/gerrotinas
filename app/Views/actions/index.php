@@ -1,5 +1,6 @@
 <?php Alert::render('actions');
 $showActions = [
+    'go_to_assign',
     'go_back',
     'go_to_upsert',
 ];
