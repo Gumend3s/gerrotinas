@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center align-items-center min-vh-100">
     <div class="card p-0 shadow" style="max-width: 420px;">
         <div class="text-center">
-            <img class="img-fluid w-75 py-3" src="<?= Helper::escape(APP_BASE_URL) . '/public/img/logo.svg' ?>">
+            <img class="img-fluid w-75 py-3" src="<?= Helper::escape(APP_BASE_URL) . '/public/img/logo.png' ?>">
             <h3 class="fw-bold mb-0">Bem-vindo!</h3>
             <p class="small text-muted">Informe seus dados de login abaixo</p>
         </div>

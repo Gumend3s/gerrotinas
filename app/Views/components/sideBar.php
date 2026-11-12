@@ -1,7 +1,7 @@
 <button class="btn btn-dark d-lg-none position-fixed top-0 start-0 m-2 z-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"><i class="bi bi-list"></i></button>
 <div class="offcanvas offcanvas-start d-lg-flex flex-column sidebar" tabindex="-1" id="sidebar">
     <a href="<?= Helper::escape(APP_BASE_URL) ?>" class="p-4 border-bottom border-secondary-subtle d-block">
-        <img src="<?= Helper::escape(APP_BASE_URL) ?>/public/img/logo_white.svg" alt="<?= Helper::escape(APP_NAME) ?>" width="211">
+        <img src="<?= Helper::escape(APP_BASE_URL) ?>/public/img/logo_white.png" alt="<?= Helper::escape(APP_NAME) ?>" width="211">
     </a>
 
     <nav class="flex-grow-1 overflow-y-auto py-2">
