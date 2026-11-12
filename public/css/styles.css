@@ -397,6 +397,16 @@ select {
     color: #3D3D3D;
 }
 
+.text-primary {
+    color: var(--night-blue) !important;
+}
+
+
+.text-secondary {
+    color: var(--amber) !important;
+}
+
+
 .text-green {
     color: #329536;
 }

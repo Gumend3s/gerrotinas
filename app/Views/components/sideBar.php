@@ -15,7 +15,7 @@
         </div>
     </nav>
     <div class="px-3 py-2 text-center">
-        <span class="text-white-50 small">Olá, <strong class="text-white"><?= Helper::abbreviateName($_SESSION[APP_SESSION_KEY]['user_name'] ?? 'Usuário') ?></strong>!</span>
+        <a href="<?= APP_BASE_URL . '/users/profile' ?>" class="text-decoration-none"><span class="text-white-50 small">Olá, <strong class="text-white"><?= Helper::abbreviateName($_SESSION[APP_SESSION_KEY]['user_name'] ?? 'Usuário') ?></strong>!</span></a>
     </div>
     <div class="p-3 border-top border-secondary-subtle">
         <a href="<?= Helper::escape(APP_BASE_URL) . '/logout' ?>" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center gap-2">

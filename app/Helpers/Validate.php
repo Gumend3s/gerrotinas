@@ -187,4 +187,28 @@ final class Validate
 
         return ['image' => $imageResource];
     }
+
+    /**
+     * Validates whether a password meets the minimum complexity requirements.
+     *
+     * Requirements:
+     * - At least 8 characters
+     * - At least one uppercase letter
+     * - At least one lowercase letter
+     * - At least one digit
+     * - At least one special character
+     *
+     * @param string $password Password to validate.
+     *
+     * @return bool True if the password meets all requirements, otherwise false.
+     */
+    public static function password(string $password): bool
+    {
+        return
+            strlen($password) >= 8
+            && preg_match('/[A-Z]/', $password)
+            && preg_match('/[a-z]/', $password)
+            && preg_match('/[0-9]/', $password)
+            && preg_match('/[\W_]/', $password);
+    }
 }

@@ -231,6 +231,33 @@ class Input
     {
         self::render($data, $field, $displayText, $placeholder, $colClass, 'input', attributes: 'inputmode="numeric"', classes: $classes, required: $required, buttons: $buttons);
     }
+    
+    /**
+     * Renders a field intended for password entry.
+     *
+     * Uses type="password" to mask the entered characters in the browser.
+     * The field value is not populated from $data, preventing previously
+     * submitted passwords from being displayed when the form is rendered again.
+     *
+     * Optional action buttons can be passed through $buttons. These are
+     * displayed alongside the field and can be used for actions related
+     * to its value, such as toggling password visibility.
+     *
+     * Example: Input::password($data, 'password', 'Senha', '', 'col-12 col-sm-6')
+     *
+     * @param array  $data Form data containing the field validation error.
+     * @param string $field Field name used for the input name, ID, and error.
+     * @param string $displayText Label text displayed above the field.
+     * @param string $placeholder Placeholder text displayed inside the field.
+     * @param string $colClass Bootstrap column classes for the field container.
+     * @param string $classes Additional CSS classes for the input.
+     * @param bool   $required Whether the field is required.
+     * @param array  $buttons Optional action buttons displayed alongside the field.
+     */
+    public static function password(array $data, string $field, string $displayText, string $placeholder, string $colClass, string $classes = '', bool $required = true, array $buttons = []): void
+    {
+        self::render($data, $field, $displayText, $placeholder, $colClass, 'input', type: 'password', classes: $classes, required: $required, buttons: $buttons);
+    }
 
     /**
      * Renders a multiline textarea field.

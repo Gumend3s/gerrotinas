@@ -10,7 +10,7 @@ class Users extends Controller
     private UserModel $userModel;
     private BusinessModel $businessModel;
 
-    private const REQUIRED_ACCESS = ['ADMINISTRATOR', 'MASTER'];
+    private const REQUIRED_ACCESS = ['EMPLOYEE', 'ADMINISTRATOR', 'MASTER'];
 
     public function __construct()
     {
@@ -67,6 +67,42 @@ class Users extends Controller
     {
         $this->view('users/index', ['users' => $_SESSION[APP_SESSION_KEY]['user_level'] === 'MASTER' ? $this->userModel->getActive() : $this->userModel->getActiveByBusiness($_SESSION[APP_SESSION_KEY]['user_business_id'])]);
     }
+
+    public function profile(): void
+    {
+        if (!($user = $this->userModel->findBy(['id' => $_SESSION[APP_SESSION_KEY]['user_id'], 'status' => 'ACTIVE']))) {
+            Alert::flash('users', 'Erro: usuário não encontrado', 'error');
+            Helper::redirect('users');
+        }
+
+        $data = [
+            'user' => $user,
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'level' => $user->level,
+        ];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $formInput = filter_input_array(INPUT_POST, FILTER_UNSAFE_RAW) ?: [];
+
+            $data['password'] = trim($formInput['password']);
+            $data['password_confirm'] = trim($formInput['password_confirm']);
+
+            $data['password_error'] = empty($data['password']) ? 'Insira uma senha' : (!Validate::password($data['password']) ? 'Senha inválida' : null);
+            $data['password_confirm_error'] = empty($data['password_confirm']) ? 'Confirme a senha' : ($data['password'] !== $data['password_confirm'] ? 'As senhas devem ser iguais' : null);
+
+            if (!array_filter(Helper::filterKeysContaining($data, '_error'))) {
+                if ($this->userModel->update($data['id'], ['password' => password_hash($data['password'], PASSWORD_DEFAULT)])) Alert::flash('users/profile', 'Senha alterada com sucesso');
+                else Alert::flash('users/profile', 'Erro: falha ao alterar senha', 'error');
+
+                Helper::redirect('users/profile');
+            }
+        }
+
+        $this->view('users/profile', $data);
+    }
+
 
     /**
      * Creates or updates a user based on the provided ID.
