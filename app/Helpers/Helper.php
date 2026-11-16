@@ -225,6 +225,7 @@ class Helper
             'level' => ['EMPLOYEE' => 'green', 'ADMINISTRATOR' => 'yellow', 'MASTER' => 'red'],
             'yes/no' => ['1' => 'green', '0' => 'red'],
             'priority' => ['LOW' => 'green', 'MEDIUM' => 'yellow', 'HIGH' => 'red'],
+            'completion_status' => ['PENDING' => 'red', 'EXECUTION' => 'yellow', 'COMPLETED' => 'green'],
         ];
 
         $classPrefixes = (array) $classPrefixes;

@@ -5,14 +5,18 @@
     </a>
 
     <nav class="flex-grow-1 overflow-y-auto py-2">
-        <div class="menu-item" data-bs-toggle="collapse" data-bs-target="#menu-records">
-            <i class="bi bi-file-earmark-text fs-6 text-white-50"></i> Cadastros<i class="bi bi-chevron-right ms-auto menu-chevron"></i>
-        </div>
-        <div class="collapse" id="menu-records">
-            <a href="<?= Helper::escape(APP_BASE_URL) . '/users' ?>" class="submenu-item">Usuários</a>
-            <?php if ($_SESSION[APP_SESSION_KEY]['user_level'] === 'MASTER'): ?> <a href="<?= Helper::escape(APP_BASE_URL) . '/businesses' ?>" class="submenu-item">Empresas</a><?php endif; ?>
-            <a href="<?= Helper::escape(APP_BASE_URL) . '/routines' ?>" class="submenu-item">Rotinas</a>
-        </div>
+        <?php if ($_SESSION[APP_SESSION_KEY]['user_level'] !== 'EMPLOYEE'): ?>
+            <div class="menu-item" data-bs-toggle="collapse" data-bs-target="#menu-records">
+                <i class="bi bi-file-earmark-text fs-6 text-white-50"></i> Cadastros<i class="bi bi-chevron-right ms-auto menu-chevron"></i>
+            </div>
+            <div class="collapse" id="menu-records">
+                <a href="<?= Helper::escape(APP_BASE_URL) . '/users' ?>" class="submenu-item">Usuários</a>
+                <?php if ($_SESSION[APP_SESSION_KEY]['user_level'] === 'MASTER'): ?> <a href="<?= Helper::escape(APP_BASE_URL) . '/businesses' ?>" class="submenu-item">Empresas</a><?php endif; ?>
+                <a href="<?= Helper::escape(APP_BASE_URL) . '/routines' ?>" class="submenu-item">Rotinas</a>
+            </div>
+        <?php else: ?>
+            <a href="<?= Helper::escape(APP_BASE_URL) . '/employees/routines' ?>" class="menu-item"><i class="bi bi-file-earmark-text fs-6 text-white-50"></i> Rotinas</a>
+        <?php endif; ?>
     </nav>
     <div class="px-3 py-2 text-center">
         <a href="<?= APP_BASE_URL . '/users/profile' ?>" class="text-decoration-none"><span class="text-white-50 small">Olá, <strong class="text-white"><?= Helper::abbreviateName($_SESSION[APP_SESSION_KEY]['user_name'] ?? 'Usuário') ?></strong>!</span></a>
