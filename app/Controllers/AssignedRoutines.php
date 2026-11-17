@@ -108,7 +108,7 @@ class AssignedRoutines extends Controller
             'routine_id' => $routine_id,
         ];
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') $data = array_merge($data, $this->getInitialData($routine_id, $id));
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') $data = array_merge($data, $this->getInitialData($routine_id, null));
         else {
             $data = array_merge($data, $this->getFormData());
 

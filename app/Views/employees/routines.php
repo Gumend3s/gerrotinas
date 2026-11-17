@@ -1,4 +1,4 @@
-<?php Alert::render('routines/employee') ?>
+<?php Alert::render('employees/routines') ?>
 <div class="d-flex flex-column card shadow-sm border-0 p-3 p-md-4">
     <h4 class="fw-bold mb-0">Rotinas</h4>
     <p class="text-muted mb-2">Visualize e acesse as rotinas atribuídas a você</p>

@@ -50,7 +50,7 @@ require APP_ROOT . "/Views/routines/components/summary.php";
                     <th>Delegador</th>
                     <th>Funcionário</th>
                     <th>Período</th>
-                    <th>Status</th>
+                    <th class="fit-column">Status</th>
                     <th class="fit-column"></th>
                 </tr>
             </thead>
@@ -73,8 +73,10 @@ require APP_ROOT . "/Views/routines/components/summary.php";
                             <td>
                                 <?= Helper::convertDateFormat($assigned_routine->start_date) ?> - <?= Helper::convertDateFormat($assigned_routine->end_date) ?>
                             </td>
-                            <td>
-                                <?= Label::enum('completion_status', $assigned_routine->completion_status) ?>
+                            <td class="fit-column">
+                                <span class="badge <?= Helper::getMappedCssClass('badge', 'completion_status', $assigned_routine->completion_status) ?>">
+                                    <?= Label::enum('completion_status', $assigned_routine->completion_status) ?>
+                                </span>
                             </td>
                             <td class="fit-column">
                                 <?php if ($assigned_routine->completion_status !== 'CANCELED'): ?>

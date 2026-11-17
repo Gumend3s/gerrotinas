@@ -1,5 +1,25 @@
-<?php Alert::render('actions');
-?>
+<?php Alert::render('employees/actions')?>
+<div class="d-flex flex-column card shadow-sm border-0 p-3 p-md-4 mb-2">
+    <h4 class="fw-bold mb-0">Rotina</h4>
+    <p class="text-muted mb-2">Informações da rotina</p>
+    <hr class="mt-0">
+    <div class="d-flex flex-column mt-1 gap-3">
+        <div class="row g-3">
+            <?php Display::text($routine->name, 'routine_name', 'Nome', 'col-12 col-sm-4') ?>
+
+            <?php Display::text($routine->project_name, 'project_name', 'Projeto', 'col-12 col-sm-4') ?>
+
+            <?php Display::enum($routine->priority, 'routine_priority', 'Prioridade', 'col-12 col-sm-4', enum: 'priority') ?>
+        </div>
+
+        <div class="row g-1">
+            <div class="col col-sm-auto ms-sm-auto">
+                <a href="<?= APP_BASE_URL ?>/employees/routines" class="btn btn-secondary btn-responsive">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="d-flex flex-column card shadow-sm border-0 p-3 p-md-4">
     <h4 class="fw-bold mb-0">Ações</h4>
     <p class="text-muted mb-2">Visualize e complete as ações da rotina selecionada</p>
@@ -18,7 +38,7 @@
                 <tbody class="align-middle">
                     <?php if (!$actions): ?>
                         <tr>
-                            <td colspan="2" class="text-center text-muted py-4">
+                            <td colspan="4" class="text-center text-muted py-4">
                                 Nenhuma ação encontrada.
                             </td>
                         </tr>
@@ -41,9 +61,9 @@
                                 <td class="fit-column">
                                     <span class="flex-shrink-0">
                                         <?php if ($action->completion_status === 'PENDING'): ?>
-                                            <a href="<?= APP_BASE_URL ?>/employees/startAction/<?= $action->id ?>" class="btn btn-secondary btn-sm" aria-label="Editar categoria">Iniciar</a>
+                                            <a href="<?= APP_BASE_URL ?>/employees/startAction/<?= $routine->id ?>/<?= $action->id ?>" class="btn btn-secondary btn-sm" aria-label="Editar categoria">Iniciar</a>
                                         <?php elseif ($action->completion_status === 'EXECUTION'): ?>
-                                            <a href="<?= APP_BASE_URL ?>/employees/endAction/<?= $action->id ?>" class="btn btn-whatsapp btn-sm" aria-label="Editar categoria">Finalizar</a>
+                                            <a href="<?= APP_BASE_URL ?>/employees/endAction/<?= $routine->id ?>/<?= $action->id ?>" class="btn btn-whatsapp btn-sm" aria-label="Editar categoria">Finalizar</a>
                                         <?php endif; ?>
                                     </span>
                                 </td>

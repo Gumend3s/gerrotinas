@@ -76,4 +76,86 @@ class EmployeeModel
 
         return $this->db->fetchAllRows();
     }
+
+    /**
+     * Finds a routine by the specified searchable fields.
+     *
+     * Only supported searchable fields are considered. If no valid search fields
+     * are provided, the method returns false. Optionally, the search can be
+     * restricted by including a status value in $searchValues.
+     *
+     * @param array $searchValues Values for supported routine fields.
+     *
+     * @return object|false The routine data object if found, or false otherwise.
+     */
+    public function findRoutineByAssignment(int|string $assigned_routine_id): object|false
+    {
+        $this->db->query(
+            "SELECT
+                AR.id,
+                R.name,
+                P.name AS project_name,
+                R.priority,
+                AR.completion_status
+            FROM assigned_routines AR
+            INNER JOIN routines R ON
+                R.id = AR.routine_id
+            INNER JOIN projects P ON
+                P.id = R.project_id
+            WHERE
+                AR.id = :assigned_routine_id"
+        );
+
+        $this->db->bind('assigned_routine_id', $assigned_routine_id);
+
+        return $this->db->fetchSingleRow();
+    }
+
+    public function startAction(int|string $assigned_action_id): bool
+    {
+        $this->db->query(
+            "UPDATE assigned_actions AA
+            LEFT JOIN assigned_routines AR ON
+                AR.id = AA.assigned_routine_id AND
+                AR.completion_status = 'PENDING'
+            SET
+                AA.completion_status = :completion_status,
+                AR.completion_status = :completion_status
+            WHERE
+                AA.id = :assigned_action_id"
+        );
+
+        $this->db->bind('completion_status', 'EXECUTION');
+        $this->db->bind('assigned_action_id', $assigned_action_id);
+
+        return $this->db->execute();
+    }
+
+    public function endAction(int|string $assigned_action_id): bool
+    {
+        $this->db->query(
+            "UPDATE assigned_actions AA
+            LEFT JOIN assigned_routines AR
+                ON AR.id = AA.assigned_routine_id
+            SET
+                AA.completion_status = :action_status,
+                AR.completion_status = CASE
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM assigned_actions AA2
+                        WHERE AA2.assigned_routine_id = AA.assigned_routine_id
+                        AND AA2.id <> AA.id
+                        AND AA2.completion_status IN ('PENDING', 'EXECUTION')
+                    ) THEN AR.completion_status
+                    ELSE :routine_status
+                END
+            WHERE AA.id = :assigned_action_id"
+        );
+
+        $this->db->bind('action_status', 'FINISHED');
+        $this->db->bind('routine_status', 'FINISHED');
+        $this->db->bind('assigned_action_id', $assigned_action_id);
+
+        return $this->db->execute();
+    }
 }

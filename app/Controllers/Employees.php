@@ -4,9 +4,11 @@ class Employees extends Controller
 {
     private const MODELS = [
         'employeeModel' => 'EmployeeModel',
+        'routineModel' => 'RoutineModel',
     ];
 
     private EmployeeModel $employeeModel;
+    private RoutineModel $routineModel;
 
     private const REQUIRED_ACCESS = ['EMPLOYEE'];
 
@@ -38,12 +40,27 @@ class Employees extends Controller
         $this->view('employees/routines', $data);
     }
 
-    public function actions(int|string $routine_id): void
+    public function actions(int|string $assigned_routine_id): void
     {
         $data = [
-            'actions' => $this->employeeModel->getRoutineActions($_SESSION[APP_SESSION_KEY]['user_id'], $routine_id),
+            'routine' => $this->employeeModel->findRoutineByAssignment($assigned_routine_id),
+            'actions' => $this->employeeModel->getRoutineActions($_SESSION[APP_SESSION_KEY]['user_id'], $assigned_routine_id),
         ];
 
         $this->view('employees/actions', $data);
+    }
+
+    public function startAction(int|string $assigned_routine_id, int|string $assigned_action_id) {
+        if ($this->employeeModel->startAction($assigned_action_id)) Alert::flash('employees/actions', 'Ação iniciada com sucesso');
+        else Alert::flash('employees/actions', 'Erro: falha ao iniciar ação', 'error');
+
+        Helper::redirect("employees/actions/$assigned_routine_id");
+    }
+
+    public function endAction(int|string $assigned_routine_id, int|string $assigned_action_id) {
+        if ($this->employeeModel->endAction($assigned_action_id)) Alert::flash('employees/actions', 'Ação finalizada com sucesso');
+        else Alert::flash('employees/actions', 'Erro: falha ao finalizar ação', 'error');
+
+        Helper::redirect("employees/actions/$assigned_routine_id");
     }
 }
